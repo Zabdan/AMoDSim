@@ -2,6 +2,7 @@ import src.coordinator.ICoord;
 import src.node.Node;
 import src.networkmanager.INetworkManager;
 import ned.DatarateChannel;
+import src.networkmanager.NetworkModifier;
 
 network AMoD
 {
@@ -49,6 +50,9 @@ network AMoD
         }
 
     submodules:
+        netmodifier: NetworkModifier {
+        }
+        
         netmanager: <netmanagerType> like INetworkManager{
             parameters:
                 numberOfNodes = height * width;
