@@ -63,7 +63,7 @@ void NetworkModifier::handleMessage(cMessage *msg)
     }
 
 
-     scheduleAt(simTime()+1.5, updateConnectionsMessage);
+     scheduleAt(simTime()+10, updateConnectionsMessage);
 
 }
 

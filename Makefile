@@ -20,99 +20,16 @@ INCLUDE_PATH = \
     -Isimulations/results \
     -Isimulations/results/simHours-4 \
     -Isimulations/results/simHours-4/coordType-Heuristic \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/seats-2 \
     -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/seats-2 \
     -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/seats-2 \
     -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500 \
     -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/seats-2 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/seats-1 \
-    -Isimulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/seats-2 \
+    -Isimulations/results/simHours-8 \
+    -Isimulations/results/simHours-8/coordType-Heuristic \
+    -Isimulations/results/simHours-8/coordType-Heuristic/maxDelay-5 \
+    -Isimulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228 \
+    -Isimulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500 \
+    -Isimulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1 \
     -Isrc \
     -Isrc/common \
     -Isrc/coordinator \
@@ -230,99 +147,16 @@ clean:
 	$(Q)-rm -f simulations/results/*_m.cc simulations/results/*_m.h
 	$(Q)-rm -f simulations/results/simHours-4/*_m.cc simulations/results/simHours-4/*_m.h
 	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/*_m.cc simulations/results/simHours-4/coordType-Heuristic/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/seats-2/*_m.h
 	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/seats-2/*_m.h
 	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/seats-2/*_m.h
 	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*_m.h
 	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/seats-2/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/seats-1/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/seats-1/*_m.h
-	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/seats-2/*_m.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/seats-2/*_m.h
+	$(Q)-rm -f simulations/results/simHours-8/*_m.cc simulations/results/simHours-8/*_m.h
+	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/*_m.cc simulations/results/simHours-8/coordType-Heuristic/*_m.h
+	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*_m.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*_m.h
+	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*_m.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*_m.h
+	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*_m.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*_m.h
+	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*_m.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*_m.h
 	$(Q)-rm -f src/*_m.cc src/*_m.h
 	$(Q)-rm -f src/common/*_m.cc src/common/*_m.h
 	$(Q)-rm -f src/coordinator/*_m.cc src/coordinator/*_m.h
@@ -334,7 +168,7 @@ cleanall: clean
 
 depend:
 	$(qecho) Creating dependencies...
-	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc simulations/*.cc simulations/results/*.cc simulations/results/simHours-4/*.cc simulations/results/simHours-4/coordType-Heuristic/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-114/vehicles-500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-228/vehicles-500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-10/sendIaTime-57/vehicles-500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-114/vehicles-500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-228/vehicles-500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-15/sendIaTime-57/vehicles-500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-114/vehicles-500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1000/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-1500/seats-2/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/seats-1/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-57/vehicles-500/seats-2/*.cc src/*.cc src/common/*.cc src/coordinator/*.cc src/networkmanager/*.cc src/node/*.cc
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc simulations/*.cc simulations/results/*.cc simulations/results/simHours-4/*.cc simulations/results/simHours-4/coordType-Heuristic/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-8/*.cc simulations/results/simHours-8/coordType-Heuristic/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc src/*.cc src/common/*.cc src/coordinator/*.cc src/networkmanager/*.cc src/node/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 $O/src/common/Packet_m.o: src/common/Packet_m.cc \

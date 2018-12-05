@@ -45,38 +45,123 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         return;
     }
 
-
+    bool noAvailableRoute = false;
     int distance;
     int outGateIndex;
     int destX = pk->getDestAddr() % rows;
     int destY = pk->getDestAddr() / rows;
 
-    if(myX < destX)
-    {
-        outGateIndex = 2; //right
-        distance = xChannelLength;
-    }
-    else
-        if(myX > destX)
-        {
-            outGateIndex = 3; //left
-            distance = xChannelLength;
+
+    bool gateZeroConnected = isConnectedGate(0);
+    bool gateOneConnected = isConnectedGate(1);
+    bool gateTwoConnected = isConnectedGate(2);
+    bool gateThreeConnected = isConnectedGate(3);
+
+
+
+    if(gateZeroConnected || gateOneConnected || gateTwoConnected || gateThreeConnected  ) {
+    if(myX < destX ||  myX > destX) {
+
+        if(myX < destX &&  gateTwoConnected)
+           {
+
+
+               outGateIndex = 2; //right
+
+               distance = xChannelLength;
+           }
+           else
+               if(myX > destX &&  gateThreeConnected)
+               {
+                   outGateIndex = 3; //left
+                   distance = xChannelLength;
+               }
+           else
+               if(myY < destY && gateZeroConnected)
+               {
+                   outGateIndex = 0; //sud
+                   distance = yChannelLength;
+               }
+               else
+               {
+                   if(gateOneConnected) {
+                   outGateIndex = 1; //north
+                   distance = yChannelLength;
+                   }
+               }
+
+
         }
-    else
-        if(myY < destY)
+
+    else  if(myY < destY ||  myY > destY) {
+
+
+        if(myY < destY && gateZeroConnected)
         {
             outGateIndex = 0; //sud
             distance = yChannelLength;
         }
-        else
+        else  if(myY > destY && gateOneConnected)
         {
             outGateIndex = 1; //north
             distance = yChannelLength;
         }
+        else if(myX < destX && gateTwoConnected)
+        {
 
+            outGateIndex = 2; //right
+
+            distance = xChannelLength;
+        }
+        else {
+            if(gateThreeConnected) {
+            outGateIndex = 3; //left
+            distance = xChannelLength;
+            }
+        }
+
+    }
+    }
+    else  {
+        noAvailableRoute = true;
+        EV <<"NO AVAILABLE ROUTE FOR DESTINATION: "<<pk->getDestAddr()<<endl;
+        if (ev.isGUI()) getParentModule()->bubble("NO AVAILABLE ROUTE!");
+
+    }
+     if(!noAvailableRoute) {
     pk->setHopCount(pk->getHopCount()+1);
     pk->setTraveledDistance(pk->getTraveledDistance() + distance);
 
     //send the vehicle to the next node
-    send(pk, "out", outGateIndex);
+    /**
+    if(outGateIndex > 0)
+    */
+
+
+        send(pk, "out", outGateIndex);
+
+
+     }
+
+
+
+}
+
+
+
+
+bool ManhattanRouting::isConnectedGate(int outGateIndex) {
+
+    cModule *node = getParentModule();
+    for(cModule::GateIterator i(node); !i.end(); i++) {
+           cGate *gate = i();
+           if(gate->getType()==cGate::OUTPUT && gate->isConnected() && gate->getIndex() == outGateIndex) {
+               EV <<"Gate founded!"<<endl;
+               return true;
+
+           }
+    }
+
+     return false;
+
 }
