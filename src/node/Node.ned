@@ -7,6 +7,8 @@ module Node
 {
     parameters:
         int address;
+        string type = default("PickUp");
+        int typeId =  default(0);
         int x;
         int y;
         bool isRequestGenerator = default(false);
@@ -21,6 +23,7 @@ module Node
         	parameters:
                 address = address;
                 @display("p=180,60");
+                requestTypesFile = "../src/common/requestTypes.txt";
         }
         
         app: <appType> like IApp {

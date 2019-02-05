@@ -41,6 +41,7 @@ private:
     ChannelLength cltable;
 
   protected:
+
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
 

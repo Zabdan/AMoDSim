@@ -1,0 +1,5 @@
+# Matching vehicleType, requestType
+# requestT  vehicleT
+    0         0      
+    1         1
+    2         1

@@ -1,21 +1,24 @@
-/*
-########################################################
-##           __  __       _____   _____ _             ##
-##     /\   |  \/  |     |  __ \ / ____(_)            ##
-##    /  \  | \  / | ___ | |  | | (___  _ _ __ ___    ##
-##   / /\ \ | |\/| |/ _ \| |  | |\___ \| | '_ ` _ \   ##
-##  / ____ \| |  | | (_) | |__| |____) | | | | | | |  ##
-## /_/    \_\_|  |_|\___/|_____/|_____/|_|_| |_| |_|  ##
-##                                                    ##
-## Author:                                            ##
-##    Andrea Di Maria                                 ##
-##    <andrea.dimaria90@gmail.com>                    ##
-########################################################
-*/
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see http://www.gnu.org/licenses/.
+// 
 
 #ifndef ABSTRACTNETWORKMANAGER_H_
 #define ABSTRACTNETWORKMANAGER_H_
 
+
+#include<fstream>
+#include<iostream>
 
 class AbstractNetworkManager : public cSimpleModule{
 
@@ -27,6 +30,11 @@ protected:
 
     virtual void initialize() = 0;
     virtual void handleMessage(cMessage *msg) = 0;
+    virtual void setDropOffNodes() = 0;
+//    virtual void readAllNodeTypes(std::map<int, std::string> *nodeTypes)0;
+  //  virtual void readAlldestNodesRequestsMatching(std::map<int, int> *nRMatch);
+    virtual std::vector<cModule *> * getAllDestinationNodes(int nodeTypeId) = 0;
+
 
   public:
     virtual double getTimeDistance(int srcAddr, int dstAddr)=0;      //Get the time needed to go from srcAddr to dstAddr
@@ -35,8 +43,15 @@ protected:
     virtual int getOutputGate(int srcAddr, int destAddr)=0;          //Get the index of the gate where send the packet to reach the destAddr
     virtual int getVehiclesPerNode(int nodeAddr)=0;                  //Get the number of vehicles located in the node at simulation start
     virtual bool isValidAddress(int nodeAddr)=0;                     //Check if the specified address is valid
+    virtual bool isValidDestinationAddress(int destAddr)=0;
+    virtual bool isValidDestinationAddress(int requestTypeId,int destAddr)=0;              //Check if the specified destination address is valid
+    virtual int getValidDestinationAddress(int requestTypeId)=0;    // Get a random valid destination node address
+    virtual cModule*getNodeFromCoords(int x, int y)=0;
+    virtual std::vector<std::pair<int,int>> *getCenteredSquare(int mult)=0;
+
     inline int getNumberOfVehicles(){return numberOfVehicles;}       //Get the fleet size
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
+
 
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
@@ -50,7 +65,68 @@ protected:
             return additionalTravelTime;
         }
     }
-};
 
+
+
+
+
+    void  readAllNodeTypes(std::map<int, std::string> *nodeTypes, const char * file) {
+
+
+        std::string line;
+        std::fstream nodeTypesFile(file, std::ios::in);
+           while(getline(nodeTypesFile, line, '\n'))
+           {
+               if (line.empty() || line[0] == '#')
+                   continue;
+
+               std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+               if (tokens.size() != 2)
+                   throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+
+               // get fields from tokens
+               int nodeTypeId = atoi(tokens[0].c_str());
+               const char *nodeTypeName = tokens[1].c_str();
+              // EV<<"Node type id"<<nodeTypeid<<" name"<<nodeTypeName<<endl;
+               nodeTypes->insert(std::pair<int, std::string>(nodeTypeId, nodeTypeName));
+
+
+    }
+
+    }
+
+    void  readAlldestNodesRequestsMatching(std::map<int, int> *nRMatch, const char * file) {
+
+
+        std::string line;
+      //  std::fstream nodeTypesFile("C:\\omnetpp-4.6\\newprojects\\CopyofAMoD_Simulator\\src\\networkmanager\\nodeTypes.txt", std::ios::in);
+        std::fstream nodeTypesFile(file, std::ios::in);
+      //  EV<<"File opened"<<nodeTypesFile.is_open()<<endl;
+           while(getline(nodeTypesFile, line, '\n'))
+           {
+              // EV<<"Line "<<endl;
+               if (line.empty() || line[0] == '#')
+                   continue;
+             //  EV<<"Line "<< line<<endl;
+               std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+               if (tokens.size() != 2)
+                   throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+
+               // get fields from tokens
+               int requestTypeId = atoi(tokens[0].c_str());
+               int nodeTypeId = atoi(tokens[1].c_str());
+              // EV<<"Node type id"<<nodeTypeId<<" name"<<nodeTypeName<<endl;
+               nRMatch->insert(std::pair<int, int>(requestTypeId, nodeTypeId));
+    }
+
+
+
+
+    }
+
+
+
+
+};
 
 #endif /* ABSTRACTNETWORKMANAGER_H_ */

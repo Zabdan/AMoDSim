@@ -1,0 +1,5 @@
+#Node types identifiers and names
+# id  name   
+   0   PickUp
+   1   FirstAid
+   2   Hospital

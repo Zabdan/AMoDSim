@@ -208,6 +208,14 @@ void BaseCoord::updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spL
 }
 
 
+/*
+void BaseCoord::getVehicleProposalByRequest(std::map<int, StopPointOrderingProposal*> vehicleProposal, TripRequest *tr) {
+    if(tr->getTypeID() == 0) {
+
+    if(tr->getTypeID() == 0 && vehicles[x])
+}*/
+
+
 /**
  * Emit statistical signal before end the simulation
  */
@@ -597,10 +605,15 @@ bool BaseCoord::isRequestValid(const TripRequest tr)
 {
     bool valid = false;
 
-    if(tr.getPickupSP() && tr.getDropoffSP() &&
-            netmanager->isValidAddress(tr.getPickupSP()->getLocation()) && netmanager->isValidAddress(tr.getDropoffSP()->getLocation()))
-                valid = true;
+            if(tr.getPickupSP() && tr.getDropoffSP() &&
+                       netmanager->isValidAddress(tr.getPickupSP()->getLocation()) && !netmanager->isValidDestinationAddress(tr.getTypeID(),tr.getPickupSP()->getLocation())
+                       && netmanager->isValidDestinationAddress(tr.getTypeID(),tr.getDropoffSP()->getLocation())) {
+                           valid = true;
+
+            }
+
     return valid;
+
 
 }
 
@@ -738,5 +751,82 @@ bool BaseCoord::eval_feasibility (int vehicleID, StopPoint* sp)
 
     return isFeasible;
 }
+
+
+
+bool BaseCoord::checkRequestVeichleTypesMatching(int requestTypeId, int veichleTypeId) {
+
+    std::map<int,int> rVMatch = readAllRequestVeichleTypesMatching();
+
+    for(auto const &rv : rVMatch) {
+
+        if( rv.first == requestTypeId, rv.second == veichleTypeId) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+std::map<int, std::string>   BaseCoord::readAllRequestTypes() {
+
+    std::map<int, std::string> requestTypes;
+    std::string line;
+     std::fstream requestTypesFile(par("requestTypesFile").stringValue(), std::ios::in);
+    // EV<<"File opened"<<nodeTypesFile.is_open()<<endl;
+        while(getline(requestTypesFile, line, '\n'))
+        {
+           // EV<<"Line "<<endl;
+            if (line.empty() || line[0] == '#')
+                continue;
+          //  EV<<"Line "<< line<<endl;
+            std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+            if (tokens.size() != 2)
+                throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+
+            // get fields from tokens
+            int requestTypeId = atoi(tokens[0].c_str());
+            const char *requestTypeName = tokens[1].c_str();
+           // EV<<"Node type id"<<nodeTypeid<<" name"<<nodeTypeName<<endl;
+            requestTypes.insert(std::pair<int, std::string>(requestTypeId, requestTypeName));
+
+
+ }
+
+return requestTypes;
+
+
+}
+
+
+
+
+
+
+std::map<int,int> BaseCoord::readAllRequestVeichleTypesMatching() {
+    std::map<int,int> rVMatch;
+    std::string line;
+          std::fstream vRMFile(par("requestVehicleMatchingFile").stringValue(), std::ios::in);
+     //     EV<<"File opened"<<vRMFile.is_open()<<endl;
+             while(getline(vRMFile, line, '\n'))
+             {
+
+                 if (line.empty() || line[0] == '#')
+                     continue;
+
+                 std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+                 if (tokens.size() != 2)
+                     throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+
+                 int requestTypeId = atoi(tokens[0].c_str());
+                 int veichleTypeId = atoi(tokens[1].c_str());
+
+                 rVMatch.insert(std::pair<int, int>(requestTypeId, veichleTypeId));
+              }
+        return rVMatch;
+
+}
+
 
 

@@ -62,3 +62,37 @@ void Vehicle::setState(int state)
 {
     this->state = state;
 }
+
+void Vehicle::setType(std::string type) {
+    this->type = type;
+    std::string s(getName());
+    s = s +"-"+ type;
+    setName(s.c_str());
+
+}
+
+
+
+void Vehicle::setTypeId(int typeId) {
+
+    this->typeId = typeId;
+
+}
+
+
+
+std::string Vehicle::getType() const
+{
+    return type;
+}
+
+
+
+int Vehicle::getTypeId() const {
+
+    return typeId;
+
+}
+
+
+

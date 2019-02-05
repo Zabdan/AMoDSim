@@ -38,6 +38,8 @@ void TripRequest::copy(const TripRequest& other)
     this->dropoff = other.dropoff ? new StopPoint(*other.dropoff) : nullptr;
     this->distanceToPickup = other.distanceToPickup;
     this->vehicleID = other.vehicleID;
+    this->type = other.type;
+    this->typeId = other.typeId;
 }
 
 
@@ -92,3 +94,35 @@ void TripRequest::setDistanceToPickup(int distanceToPickup)
 {
     this->distanceToPickup = distanceToPickup;
 }
+
+
+
+
+
+void TripRequest::setType(std::string type) {
+    this->type = type;
+}
+
+
+void TripRequest::setTypeID(int typeId) {
+    this->typeId = typeId;
+}
+
+
+std::string TripRequest::getType() const
+{
+    return type;
+}
+
+int TripRequest::getTypeID() const {
+    return typeId;
+}
+
+
+
+
+bool isValidType(int type) {
+
+
+}
+

@@ -86,7 +86,7 @@ void L2Queue::startTransmitting(cMessage *msg)
 
     EV << "Starting transmission of " << msg << endl;
     int64 numBytes = check_and_cast<cPacket *>(msg)->getByteLength();
-    try {
+  //  try {
     send(msg, "line$o");
 
 
@@ -97,11 +97,11 @@ void L2Queue::startTransmitting(cMessage *msg)
     // Schedule an event for the time when last bit will leave the gate.
     simtime_t endTransmission = gate("line$o")->getTransmissionChannel()->getTransmissionFinishTime();
     scheduleAt(endTransmission, endTransmissionEvent);
-    }
-    catch(cException e) {
+  //  }
+ /*   catch(cException e) {
               if(ev.isGUI()) getParentModule()->bubble("TRASMISSION ERROR!");
               e.what();
-              }
+              }*/
 }
 
 void L2Queue::handleMessage(cMessage *msg)

@@ -222,6 +222,7 @@ $O/src/networkmanager/ManhattanNetworkManager.o: src/networkmanager/ManhattanNet
 	src/networkmanager/AbstractNetworkManager.h \
 	src/networkmanager/ManhattanNetworkManager.h
 $O/src/networkmanager/NetworkModifier.o: src/networkmanager/NetworkModifier.cc \
+	src/networkmanager/AbstractNetworkManager.h \
 	src/networkmanager/NetworkModifier.h
 $O/src/node/App.o: src/node/App.cc \
 	src/common/Packet_m.h \
@@ -236,6 +237,8 @@ $O/src/node/L2Queue.o: src/node/L2Queue.cc
 $O/src/node/ManhattanRouting.o: src/node/ManhattanRouting.cc \
 	src/common/Packet_m.h \
 	src/common/Vehicle.h \
+	src/networkmanager/AbstractNetworkManager.h \
+	src/networkmanager/ManhattanNetworkManager.h \
 	src/node/ManhattanRouting.h
 $O/src/node/Routing.o: src/node/Routing.cc \
 	src/common/Packet_m.h \

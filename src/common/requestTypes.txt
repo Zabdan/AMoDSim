@@ -1,0 +1,5 @@
+#Request types identifiers and names
+# id  name
+   0   Emergency_0
+   1   Emergency_1
+   2   Emergency_2

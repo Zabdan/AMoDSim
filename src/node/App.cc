@@ -56,6 +56,7 @@ class App : public cSimpleModule,cListener
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual void receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID);
+    virtual std::map<int, std::string>  readAllVehicleTypes();
 };
 
 Define_Module(App);
@@ -73,7 +74,7 @@ App::~App()
 
 void App::initialize()
 {
-    myAddress = par("address");
+    myAddress = par("address");   // dove viene settato l'indirizzo?
     seatsPerVehicle = par("seatsPerVehicle");
     alightingTime = getParentModule()->getParentModule()->par("alightingTime");
     boardingTime = getParentModule()->getParentModule()->par("boardingTime");
@@ -92,9 +93,19 @@ void App::initialize()
     {
         for(int i=0; i<numberOfVehicles; i++)
         {
+            // Random generation of vehicle type
+            std::map<int, std::string> vTypes = readAllVehicleTypes();
+            std::map<int, std::string>::iterator it = vTypes.begin();
+            int firstId = it->first;
+            it = vTypes.end();
+            it--;
+            int lastId = it->first;
+            int vTypeId = intuniform(firstId, lastId, 3);
             Vehicle *v = new Vehicle();
+            v->setTypeId(vTypeId);
+            v->setType(vTypes[vTypeId]);
             v->setSeats(seatsPerVehicle);
-            EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() << ". It has " << v->getSeats() << " seats." << endl;
+            EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() <<"of type  "<<v->getType()<<  ". It has " << v->getSeats() << " seats." << endl;
             tcoord->registerVehicle(v, myAddress);
         }
 
@@ -141,7 +152,7 @@ void App::handleMessage(cMessage *msg)
         vehicle->setDestAddr(nextStopPoint->getLocation());
 
         //Time for boarding or drop-off passengers
-        double delays = (nextStopPoint->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, nextStopPoint->getLocation());
+        double delays = (nextStopPoint->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, nextStopPoint->getLocation());  // da chiarire
         if(delays <0)
             delays=0;
 
@@ -220,3 +231,31 @@ void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicle
   }
 
 }
+
+
+
+
+std::map<int, std::string>  App::readAllVehicleTypes() {
+
+    std::map<int, std::string> vehicleTypes;
+    std::string line;
+    std::fstream vehicleTypesFile(par("vehicleTypesFile").stringValue(), std::ios::in);
+       while(getline(vehicleTypesFile, line, '\n'))
+       {
+           if (line.empty() || line[0] == '#')
+               continue;
+           std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+           if (tokens.size() != 2)
+               throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+
+           // get fields from tokens
+           int vehicleTypeId = atoi(tokens[0].c_str());
+           const char *vehicleType = tokens[1].c_str();
+
+           vehicleTypes.insert(std::pair<int, std::string>(vehicleTypeId, vehicleType));
+
+
+}
+       return vehicleTypes;
+}
+

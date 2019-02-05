@@ -16,10 +16,12 @@
 #include "ManhattanRouting.h"
 #include "Vehicle.h"
 
+
 Define_Module(ManhattanRouting);
 
 void ManhattanRouting::initialize()
 {
+
     myAddress = getParentModule()->par("address");
     myX = getParentModule()->par("x");
     myY = getParentModule()->par("y");
@@ -28,6 +30,7 @@ void ManhattanRouting::initialize()
 
     xChannelLength = getParentModule()->getParentModule()->par("xNodeDistance");
     yChannelLength = getParentModule()->getParentModule()->par("yNodeDistance");
+    netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
 
     EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY << endl;
 }
@@ -44,6 +47,10 @@ void ManhattanRouting::handleMessage(cMessage *msg)
         send(pk, "localOut");
         return;
     }
+    if(msg->isSelfMessage())   {
+      //  if (ev.isGUI()) getParentModule()->bubble("RETRY TO SEND pk!");
+    }
+
 
     bool noAvailableRoute = false;
     int distance;
@@ -51,97 +58,67 @@ void ManhattanRouting::handleMessage(cMessage *msg)
     int destX = pk->getDestAddr() % rows;
     int destY = pk->getDestAddr() / rows;
 
+    EV <<"Pk dest address "<<pk->getDestAddr()<<"  destX"<<destX<< " destY"<<destY<<endl;
 
-    bool gateZeroConnected = isConnectedGate(0);
-    bool gateOneConnected = isConnectedGate(1);
-    bool gateTwoConnected = isConnectedGate(2);
-    bool gateThreeConnected = isConnectedGate(3);
+       // cGate * g = netmanager->getGateToDestination(myAddress, pk->getDestAddr());
+        int gIndex = netmanager->getOutputGate(myAddress, pk->getDestAddr());
+/*
+    int startIndexToCheck = getParentModule()->getIndex();
+    EV<<"Staring Node x"<< myX<<" y "<<myY<<endl;
+
+    bool noAssignedGate = true;
 
 
 
-    if(gateZeroConnected || gateOneConnected || gateTwoConnected || gateThreeConnected  ) {
-    if(myX < destX ||  myX > destX) {
-
-        if(myX < destX &&  gateTwoConnected)
+        if(myX < destX )
            {
-
+              if(isMinRiskLevelRoute(2) || isAllEqualRiskLevelRoute()  || myY == destY) {
 
                outGateIndex = 2; //right
 
                distance = xChannelLength;
+               noAssignedGate = false;
+               }
            }
-           else
-               if(myX > destX &&  gateThreeConnected)
+
+        else if(myX > destX )
                {
+           if(isMinRiskLevelRoute(3) || isAllEqualRiskLevelRoute() || myY == destY) {
                    outGateIndex = 3; //left
                    distance = xChannelLength;
+                   noAssignedGate = false;
+            }
                }
-           else
-               if(myY < destY && gateZeroConnected)
+
+             if(myY < destY && noAssignedGate)
                {
+
                    outGateIndex = 0; //sud
                    distance = yChannelLength;
+
                }
-               else
+               else if(myY > destY && noAssignedGate)
                {
-                   if(gateOneConnected) {
                    outGateIndex = 1; //north
                    distance = yChannelLength;
-                   }
+
                }
 
-
-        }
-
-    else  if(myY < destY ||  myY > destY) {
+*/
 
 
-        if(myY < destY && gateZeroConnected)
-        {
-            outGateIndex = 0; //sud
-            distance = yChannelLength;
-        }
-        else  if(myY > destY && gateOneConnected)
-        {
-            outGateIndex = 1; //north
-            distance = yChannelLength;
-        }
-        else if(myX < destX && gateTwoConnected)
-        {
 
-            outGateIndex = 2; //right
-
-            distance = xChannelLength;
-        }
-        else {
-            if(gateThreeConnected) {
-            outGateIndex = 3; //left
-            distance = xChannelLength;
-            }
-        }
-
-    }
-    }
-    else  {
-        noAvailableRoute = true;
-        EV <<"NO AVAILABLE ROUTE FOR DESTINATION: "<<pk->getDestAddr()<<endl;
-        if (ev.isGUI()) getParentModule()->bubble("NO AVAILABLE ROUTE!");
-
-    }
-     if(!noAvailableRoute) {
     pk->setHopCount(pk->getHopCount()+1);
     pk->setTraveledDistance(pk->getTraveledDistance() + distance);
 
+
+
     //send the vehicle to the next node
-    /**
-    if(outGateIndex > 0)
-    */
+
+        send(pk, "out", gIndex);
 
 
-        send(pk, "out", outGateIndex);
 
-
-     }
 
 
 
@@ -149,10 +126,76 @@ void ManhattanRouting::handleMessage(cMessage *msg)
 
 
 
+/*
 
-bool ManhattanRouting::isConnectedGate(int outGateIndex) {
-
+bool ManhattanRouting::isMinRiskLevelRoute(int outGateIndex) {
+   // double minRisk = -1;
+    std::vector<int> allMin;
+    int indexGate = -1;
+    int j = 0;
+    bool allEqual = true;
+    double minRisk = -1;
     cModule *node = getParentModule();
+       for(cModule::GateIterator i(node); !i.end(); i++) {
+              cGate *gate = i();
+              if(gate->getType()==cGate::OUTPUT && gate->isConnected()) {
+                  EV<<"GATE NAME END "<<gate->getFullName()<< "INDEX "<<gate->getIndex()<<endl;
+                  cChannel *c = gate->getTransmissionChannel();
+
+                  double riskLevel = c->par("riskLevel").doubleValue();
+
+                  if(j == 0 || minRisk > riskLevel) {
+                      minRisk = riskLevel;
+                      indexGate =  gate->getIndex();
+                  }
+
+                  j++;
+              }
+       }
+       if(node->gate("port$o", outGateIndex)->getTransmissionChannel()->par("riskLevel").doubleValue() == minRisk)
+           return true;
+            return false;
+
+   }
+
+
+
+bool ManhattanRouting::isAllEqualRiskLevelRoute() {
+
+    int j = 0;
+    double risk = -1;
+    bool allEqual = true;
+    cModule *node = getParentModule();
+       for(cModule::GateIterator i(node); !i.end(); i++) {
+              cGate *gate = i();
+              if(gate->getType()==cGate::OUTPUT && gate->isConnected()) {
+
+                  cChannel *c = gate->getTransmissionChannel();
+                  double riskLevel = c->par("riskLevel").doubleValue();
+                  EV<< "RISK level "<< riskLevel<<endl;
+                  if(j == 0) {
+                      risk = riskLevel;
+                  }
+                  if(allEqual) {
+                      if(!(risk == riskLevel)) {
+                          allEqual = false;
+                          EV<< "NOT ALL Equal "<<endl;
+                      }
+                  }
+                  j++;
+              }
+       }
+
+    return allEqual;
+
+   }
+
+*/
+
+/*
+bool ManhattanRouting::isConnectedGate(int outGateIndex, int indexNode) {
+
+    cModule *node = getParentModule()->getParentModule()->getSubmodule("n", indexNode);
     for(cModule::GateIterator i(node); !i.end(); i++) {
            cGate *gate = i();
            if(gate->getType()==cGate::OUTPUT && gate->isConnected() && gate->getIndex() == outGateIndex) {
@@ -165,3 +208,4 @@ bool ManhattanRouting::isConnectedGate(int outGateIndex) {
      return false;
 
 }
+*/

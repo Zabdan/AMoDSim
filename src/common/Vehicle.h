@@ -24,9 +24,13 @@ class Vehicle: public Packet {
         int id;
         int seats;
         int traveledDistance;
+        int typeId;
+        std::string type;
         int state;
 
+
     public:
+    //    enum class Types{EMERGENCY_0=0, EMERGENCY_1=1, EMERGENCY_2=2};
         Vehicle();
         virtual ~Vehicle();
         virtual int getID() const;
@@ -36,6 +40,11 @@ class Vehicle: public Packet {
         virtual void setSeats(int seats);
         virtual void setState(int state);
         virtual int getState() const;
+        virtual void setType(std::string type);
+        virtual void setTypeId(int typeId);
+        virtual std::string getType() const;
+        virtual int getTypeId() const;
+
 };
 
 #endif /* VEHICLE_H_ */

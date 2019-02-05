@@ -8,8 +8,8 @@ network AMoD
 {
 	parameters:
 	    //------Network Parameters------
-        int height @prompt("Number of rows") = default(5); 	//nodes on y axes
-        int width @prompt("Nodes per row") = default(5); 	//nodes on x axes
+        int height @prompt("Number of rows") = default(6); 	//nodes on y axes
+        int width @prompt("Nodes per row") = default(6); 	//nodes on x axes
         double xNodeDistance @unit(m) = default(1000m);		//Distance between nodes on X axes
         double yNodeDistance @unit(m) = default(1000m);		//Distance between nodes on Y axes
         double h @unit(m)= height * yNodeDistance + 100m; 	//simulation area: y size
@@ -26,11 +26,16 @@ network AMoD
         double xTravelTime @unit(s) = (dropUnit(xNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
         double yTravelTime @unit(s) = (dropUnit(yNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
         
+      
+        double riskZoneExp = default(0);
+       
         //------Coordinator type--------
         string coordType = default ("RadioTaxiCoord");
         
         //------NetworkManager type--------
-        string netmanagerType = default ("AdaptiveNetworkManager");
+        string netmanagerType = default ("ManhattanNetworkManager");
+        
+         
         
         @display("bgb=$w,$h");
         
@@ -40,6 +45,7 @@ network AMoD
             parameters:
                 delay = xTravelTime; //time needed to travel the street (x axes). (propagation delay)
                 double length @unit(m) = xNodeDistance;
+                volatile double riskLevel = 0; 
         }
         
         channel yRoad extends ned.DatarateChannel
@@ -47,15 +53,19 @@ network AMoD
             parameters:
                 delay = yTravelTime; //time needed to travel the street (y axes). (propagation delay)
                 double length @unit(m) = yNodeDistance;
+                int riskLevel = 0; // 
         }
 
     submodules:
+        
         netmodifier: NetworkModifier {
         }
         
         netmanager: <netmanagerType> like INetworkManager{
             parameters:
                 numberOfNodes = height * width;
+                
+                
         	@display("p=800,50");
         }
                 
@@ -68,10 +78,14 @@ network AMoD
                 address = index;
                 x=index % width;
                 y=index / width;
+                type = "PickUp";
                 @display("p=,,m,$width,$xNodeDistance,$yNodeDistance");
             gates:
                 port[4];
+                
+          
         }
+        
         
         
     connections allowunconnected:

@@ -1,0 +1,4 @@
+#Request types identifiers and names
+# id  name
+   0   car
+   1   Ambulance

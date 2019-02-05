@@ -14,6 +14,8 @@
 */
 
 #include <omnetpp.h>
+#include<fstream>
+#include<iostream>
 #include "TripRequest.h"
 #include "AbstractNetworkManager.h"
 
@@ -47,6 +49,7 @@ class TripRequestSubmitter : public cSimpleModule
         virtual void initialize();
         virtual void handleMessage(cMessage *msg);
         virtual TripRequest* buildTripRequest();
+        virtual std::map<int, std::string> readAllRequestTypes();
 };
 
 Define_Module(TripRequestSubmitter);
@@ -64,6 +67,11 @@ TripRequestSubmitter::~TripRequestSubmitter()
 
 void TripRequestSubmitter::initialize()
 {
+    bool reqGen = getParentModule()->par("isRequestGenerator").boolValue();
+    if(!reqGen) {
+        EV<<"TripRequest not generated for node x,y"<<getParentModule()->par("x").longValue()<<" "<<getParentModule()->par("y").longValue()<<endl;
+        return;
+    }
     myAddress = par("address");
     destAddresses = par("destAddresses");
     minTripLength = par("minTripLength");
@@ -73,13 +81,21 @@ void TripRequestSubmitter::initialize()
 
     x_coord = getParentModule()->par("x");
     y_coord = getParentModule()->par("y");
-    netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
 
+    double rows = getParentModule()->getParentModule()->par("width");
+    double columns = getParentModule()->getParentModule()->par("height");
+
+
+
+
+    netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
+//    if(!netmanager->isValidDestinationAddress(myAddress)) {
     generatePacket = new cMessage("nextPacket");
     tripRequest = registerSignal("tripRequest");
 
     if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime)
         scheduleAt(sendIATime->doubleValue(), generatePacket);
+  //  }
 
 }
 
@@ -87,14 +103,17 @@ void TripRequestSubmitter::initialize()
 void TripRequestSubmitter::handleMessage(cMessage *msg)
 {
     //EMIT a TRIP REQUEST
+
     if (msg == generatePacket)
     {
         TripRequest *tr = nullptr;
 
-        if (ev.isGUI()) getParentModule()->bubble("TRIP REQUEST");
-        tr = buildTripRequest();
 
-        EV << "Requiring a new trip from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
+        tr = buildTripRequest();
+         std::string s("REQUEST-"+tr->getType());
+        if (ev.isGUI()) getParentModule()->bubble(s.c_str());
+
+        EV << "Requiring a new trip of type"<<tr->getType()<< " from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
         EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
         emit(tripRequest, tr);
@@ -117,10 +136,34 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
     TripRequest *request = new TripRequest();
     double simtime = simTime().dbl();
 
+
     // Generate a random destination address for the request
-    int destAddress = intuniform(0, destAddresses-1, 3);
-    while (destAddress == myAddress || netmanager->getSpaceDistance(myAddress, destAddress) < minTripLength)
-        destAddress = intuniform(0, destAddresses-1, 3);
+   /* int destAddress = intuniform(0, destAddresses-1, 3);
+    while (destAddress == myAddress || netmanager->getSpaceDistance(myAddress, destAddress) < minTripLength || !netmanager->isValidDestinationAddress(destAddress))
+        destAddress = intuniform(0, destAddresses-1, 3);*/
+
+
+
+
+   // int firstType = static_cast<int>(TripRequest::Types::EMERGENCY_0);
+  //  int lastType = static_cast<int>(TripRequest::Types::EMERGENCY_2);
+
+
+    // generate a  dinamic request type
+    std::map<int, std::string> reqTypes = readAllRequestTypes();
+    std::map<int, std::string>::iterator it = reqTypes.begin();
+    int firstId = it->first;
+    it = reqTypes.end();
+    it--;
+    int lastId = it->first;
+    int requestId = intuniform(firstId, lastId, 3);
+    request->setTypeID(requestId);
+    request->setType(reqTypes[requestId]);
+
+    int destAddress =  netmanager->getValidDestinationAddress(request->getTypeID());
+
+  //  bool valid = netmanager->isValidDestinationAddress(121, destAddress);
+   // EV <<"IS VALID? "<<valid<<endl;
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);
@@ -134,3 +177,34 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
 
     return request;
 }
+
+
+
+
+
+
+std::map<int, std::string>  TripRequestSubmitter::readAllRequestTypes() {
+
+    std::map<int, std::string> requestTypes;
+    std::string line;
+  //  std::fstream nodeTypesFile("C:\\omnetpp-4.6\\newprojects\\CopyofAMoD_Simulator\\src\\networkmanager\\nodeTypes.txt", std::ios::in);
+    std::fstream requestTypesFile(par("requestTypesFile").stringValue(), std::ios::in);
+       while(getline(requestTypesFile, line, '\n'))
+       {
+           if (line.empty() || line[0] == '#')
+               continue;
+           std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+           if (tokens.size() != 2)
+               throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+
+           // get fields from tokens
+           int requestTypeId = atoi(tokens[0].c_str());
+           const char *requestType = tokens[1].c_str();
+
+           requestTypes.insert(std::pair<int, std::string>(requestTypeId, requestType));
+
+
+}
+       return requestTypes;
+}
+

@@ -48,8 +48,12 @@ void RadioTaxiCoord::handleTripRequest(TripRequest *tr)
 {
     std::map<int,StopPointOrderingProposal*> vehicleProposals;
 
+
+
     for (auto const &x : vehicles)
     {
+
+       if(checkRequestVeichleTypesMatching(tr->getTypeID(), x.first->getTypeId()) ) {
         //Check if the vehicle has enough seats to serve the request
         if(x.first->getSeats() >= tr->getPickupSP()->getNumberOfPassengers())
         {
@@ -57,6 +61,9 @@ void RadioTaxiCoord::handleTripRequest(TripRequest *tr)
             if(tmp)
                 vehicleProposals[x.first->getID()] = tmp;
         }
+   // }
+    }
+
     }
 
     //Assign the request to the vehicle which minimize the waiting time

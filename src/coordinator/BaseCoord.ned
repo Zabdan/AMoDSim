@@ -7,6 +7,9 @@ simple BaseCoord like ICoord
         double minTripLength @unit(m) = default(1000m);
         int requestAssignmentStrategy = default(0); //Allowed are: 0(MinCost) - 1(MinWaitingTime)
         
+        string requestVehicleMatchingFile = "../src/common/requestVehicleMatching.txt";
+        string requestTypesFile = "../src/common/requestTypes.txt";
+        
         @display("i=block/cogwheel_s");
         
         // ------ SIGNALS -------- //

@@ -20,7 +20,7 @@ Define_Module(NetworkModifier);
 
 
 NetworkModifier::NetworkModifier() {
-
+    // TODO Auto-generated constructor stub
 
 
 }
@@ -28,7 +28,7 @@ NetworkModifier::NetworkModifier() {
 
 
 NetworkModifier::~NetworkModifier() {
-
+    // TODO Auto-generated destructor stub
 
 }
 
@@ -36,15 +36,21 @@ NetworkModifier::~NetworkModifier() {
 
 void NetworkModifier::initialize()
 {
-
+    topo = new cTopology("topo");
+    delay = 0.01;
+    ber = 0;
+    datarate = 1e6;
+    netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getSubmodule("netmanager"));
+    timeLimit = &par("timeLimit");
     updateConnectionsMessage = new cMessage();
     std::vector<std::string> nedTypes;
     nedTypes.push_back("src.node.Node");
     topo->extractByNedTypeName(nedTypes);
-    scheduleAt(0, updateConnectionsMessage);
+    setRiskZone();
+   // scheduleAt(0, updateConnectionsMessage);
 }
 
-
+/*
 
 void NetworkModifier::handleMessage(cMessage *msg)
 {
@@ -58,7 +64,7 @@ void NetworkModifier::handleMessage(cMessage *msg)
     else {
         EV << "UpdateConnectionsMessage arrived! "<< endl;
 
-        rndChangeConnections();
+        rndChangeConnectionsRiskLevel();
 
     }
 
@@ -66,9 +72,9 @@ void NetworkModifier::handleMessage(cMessage *msg)
      scheduleAt(simTime()+10, updateConnectionsMessage);
 
 }
+*/
 
-
-
+/*
 
 void NetworkModifier::connect(cGate *src, cGate *dest)
 {
@@ -92,97 +98,153 @@ void NetworkModifier::connect(cGate *src, cGate *dest)
 
 }
 
-
-
-/**
- * Disconnect nearby nodes
- */
-
-
-int NetworkModifier::disconnectNodes( int srcNodeId, int destNodeId, int count) {
-    if(srcNodeId == destNodeId)
+*/
+/*
+int NetworkModifier::changeNodesConnectionRiskLevel ( int srcNodeIdx, int destNodeIdx, int count) {
+    if(srcNodeIdx == destNodeIdx)
         return -1;
-    cTopology::Node* srcNode = getNodeById(srcNodeId);
-    cTopology::Node* destNode = getNodeById(destNodeId);
-    if(srcNode == NULL || destNode == NULL)
-        return -1;
-    for(int j = 0; j<srcNode->getNumOutLinks(); j++) {
-        cTopology::LinkOut* srcLinkOut = srcNode->getLinkOut(j);
-        if(srcLinkOut->getRemoteGate()->getOwnerModule() == destNode->getModule() &&  srcLinkOut->getLocalGate()->isConnected() ) {
-            srcLinkOut->getLocalGate()->disconnect();
-            EV<<"New disconnection "<< srcNode->getModule()->getFullName()<<"-\\->"<<destNode->getModule()->getFullName()<<endl;
-            count++;
-        }
+    cTopology::Node* srcNode = getNodeById(srcNodeIdx);
+    cTopology::Node* destNode = getNodeById(destNodeIdx);
 
-    }
-    if(count == 1)
-        disconnectNodes(destNodeId, srcNodeId, count);
-
-
-
-    return 0;
-}
-
-
-
-/**
- * Disconnect all nearby nodes from srcNode
- */
-
-int NetworkModifier::disconnectFromAllNodes(int srcNodeId) {
-    cTopology::Node* srcNode = getNodeById(srcNodeId);
-    if(srcNode == NULL)
-        return -1;
-    for(int j = 0; j<srcNode->getNumOutLinks(); j++) {
-        cTopology::LinkOut* srcLinkOut = srcNode->getLinkOut(j);
-        if(srcLinkOut->getLocalGate()->isConnected()) {
-            srcLinkOut->getLocalGate()->disconnect();
-            EV<<"New disconnection "<< srcNode->getModule()->getFullName()<<"-\\->"<<srcLinkOut->getRemoteGate()->getOwnerModule()->getFullName()<<endl;
-        }
-
-    }
-
-
-
-
-    return 0;
-}
-
-
-
-/**
- * Connect two nearby Nodes
- */
-
-int NetworkModifier::connectNodes( int srcNodeId, int destNodeId, int count) {
-    if(srcNodeId == destNodeId)
-        return -1;
-    cTopology::Node* srcNode = getNodeById(srcNodeId);
-    cTopology::Node* destNode = getNodeById(destNodeId);
-    if(srcNode == NULL || destNode == NULL)
-        return -1;
     for(int j = 0; j<srcNode->getNumOutLinks(); j++) {
         cTopology::LinkOut* srcLinkOut = srcNode->getLinkOut(j);
         if(srcLinkOut->getRemoteGate()->getOwnerModule() == destNode->getModule()) {
-            if(!srcLinkOut->getLocalGate()->isConnected()){
-                connect(srcLinkOut->getLocalGate(), srcLinkOut->getRemoteGate());
-            EV<<"New connection "<< srcNode->getModule()->getFullName()<<"-->"<<destNode->getModule()->getFullName()<<endl;
-            }
+           cDisplayString &s  = srcLinkOut->getLocalGate()->getTransmissionChannel()->getDisplayString();
+           s.parse("ls=red");
+
+            cPar &riskLevel = srcLinkOut->getLocalGate()->getTransmissionChannel()->par("riskLevel");
+            riskLevel.setDoubleValue(1.0);
+
+            EV<<"Risk Level increased to "<<riskLevel.doubleValue()<< "for connection"<< srcNode->getModule()->getFullName()<<"-->"<<destNode->getModule()->getFullName()<<endl;
             count++;
         }
 
     }
     if(count == 1) {
-        connectNodes(destNodeId, srcNodeId, count);
+        changeNodesConnectionRiskLevel(destNodeIdx, srcNodeIdx, count);
+        return 0;
     }
 
+    if(count == 2) {
+        return 0;
+    }
+
+    return -1;
+}
 
 
-    return 0;
+*/
+
+void  NetworkModifier::setRiskZone() {
+    int riskZoneExp = this->getParentModule()->par("riskZoneExp").doubleValue();
+    std::vector<std::pair<int,int> > *coords = netmanager->getCenteredSquare(riskZoneExp);
+
+    std::vector<cTopology::Node *> nodes;
+    for(const auto &x : (*coords)) {
+        EV<<"COORDS "<<x.first<<" "<<x.second;
+        cModule *n = netmanager->getNodeFromCoords(x.first, x.second);
+        nodes.push_back(getNodeById(n->getId()));
+    }
+
+     for(int i = 0; i<nodes.size(); i++) {
+
+        cTopology::Node *n = nodes[i];
+
+
+
+        for(int j = 0; j<n->getNumOutLinks(); j++) {
+               cTopology::LinkOut* srcLinkOut = n->getLinkOut(j);
+
+               for(int k = 0; k<nodes.size(); k++) {
+                   cTopology::Node *nT = nodes[k];
+
+                   if(srcLinkOut->getRemoteNode()->getModuleId() ==  nT->getModuleId() && nT->getModuleId() != n->getModuleId() ) {
+                  cDisplayString &s  = srcLinkOut->getLocalGate()->getTransmissionChannel()->getDisplayString();
+                  s.parse("ls=red");
+
+                   cPar &riskLevel = srcLinkOut->getLocalGate()->getTransmissionChannel()->par("riskLevel");
+                   riskLevel.setDoubleValue(1.0);
+
+                   EV<<"Risk Level increased to "<<riskLevel.doubleValue()<< "for connection"<< n->getModule()->getFullName()<<"-->"<<nT->getModule()->getFullName()<<endl;
+
+               }
+
+           }
+
+        }
+     }
+
+
+
+
+
 }
 
 
 
+
+/*
+int NetworkModifier::disconnectNodes( int srcNodeIdx, int destNodeIdx, int count) {
+    if(srcNodeIdx == destNodeIdx)
+        return -1;
+    cTopology::Node* srcNode = getNodeById(srcNodeIdx);
+    cTopology::Node* destNode = getNodeById(destNodeIdx);
+
+               for(int j = 0; j<srcNode->getNumOutLinks(); j++) {
+                         cTopology::LinkOut* srcLinkOut = srcNode->getLinkOut(j);
+                                 if(srcLinkOut->getRemoteGate()->getOwnerModule() == destNode->getModule() &&  srcLinkOut->getLocalGate()->isConnected() ) {
+                                     srcLinkOut->getLocalGate()->disconnect();
+                                     EV<<"New disconnection "<< srcNode->getModule()->getFullName()<<"-\\->"<<destNode->getModule()->getFullName()<<endl;
+                                     count++;
+                                 }
+
+                                 }
+                                if(count == 1) {
+                                   disconnectNodes(destNodeIdx, srcNodeIdx, count);
+                                   return 0;
+                                 }
+
+                                 if(count == 2) {
+                                     return 0;
+                                 }
+
+               return -1;
+}
+
+
+
+int NetworkModifier::connectNodes( int srcNodeIdx, int destNodeIdx, int count) {
+    if(srcNodeIdx == destNodeIdx)
+        return -1;
+    cTopology::Node* srcNode = getNodeById(srcNodeIdx);
+    cTopology::Node* destNode = getNodeById(destNodeIdx);
+
+               for(int j = 0; j<srcNode->getNumOutLinks(); j++) {
+                         cTopology::LinkOut* srcLinkOut = srcNode->getLinkOut(j);
+                                 if(srcLinkOut->getRemoteGate()->getOwnerModule() == destNode->getModule()) {
+                                     if(!srcLinkOut->getLocalGate()->isConnected())
+                                         connect(srcLinkOut->getLocalGate(), srcLinkOut->getRemoteGate());
+                                         EV<<"New connection "<< srcNode->getModule()->getFullName()<<"-->"<<destNode->getModule()->getFullName()<<endl;
+                                     count++;
+                                 }
+
+                                 }
+                                if(count == 1) {
+                                   connectNodes(destNodeIdx, srcNodeIdx, count);
+                                   return 0;
+                                 }
+
+                                 if(count == 2) {
+                                     return 0;
+                                 }
+
+               return -1;
+}
+
+
+*/
+
+/*
 
 
 std::vector<int> *NetworkModifier::getNodesId() {
@@ -195,11 +257,9 @@ std::vector<int> *NetworkModifier::getNodesId() {
 
 }
 
+*/
 
-
-/**
- * Execute disconnections and  connections random test
- */
+/*
 
 void NetworkModifier::rndChangeConnections() {
 
@@ -209,27 +269,68 @@ void NetworkModifier::rndChangeConnections() {
     int destNodeId;
     int first = intuniform(0, nodesId->size()-1);
     int second = intuniform(0, nodesId->size()-1);
-    if(intuniform(0, 2) % 2 ==0)
+    if((simTime().dbl() / directionTime->doubleValue()) <1)
        disconnectNodes((*nodesId)[first],(*nodesId)[second]);
-    else
+    else {
        connectNodes((*nodesId)[first],(*nodesId)[second]);
+       if(simTime().dbl() >= directionTime->doubleValue()*2000)
+           directionTime->setDoubleValue(simTime().dbl()+directionTime->doubleValue());
+    }
     delete nodesId;
     }
 
 
 }
+*/
+/*
+void NetworkModifier::rndChangeConnectionsRiskLevel() {
+
+    std::vector<int> *nodesId = getNodesId();
+    if(nodesId) {
+    int srcNodeId = intuniform(0, nodesId->size()-1);
+    int destNodeId= intuniform(0, nodesId->size()-1);
+    cTopology::Node *sN = getNodeById((*nodesId)[srcNodeId]);
+    cTopology::Node *dN = getNodeById((*nodesId)[destNodeId]);
+    cModule *sourceNode = sN->getModule();
+    cModule *destNode = dN->getModule();
+    bool isSValid = netmanager->isValidDestinationAddress(sourceNode->par("address").longValue());
+    bool isDValid = netmanager->isValidDestinationAddress(destNode->par("address").longValue());
+
+    if((simTime().dbl() / timeLimit->doubleValue())<1) {
+        while(isSValid || isDValid) {
+             srcNodeId = intuniform(0, nodesId->size()-1);
+             destNodeId= intuniform(0, nodesId->size()-1);
+             sN = getNodeById((*nodesId)[srcNodeId]);
+             dN = getNodeById((*nodesId)[destNodeId]);
+             sourceNode = sN->getModule();
+             destNode = dN->getModule();
+             isSValid = netmanager->isValidDestinationAddress(sourceNode->par("address").longValue());
+             isDValid = netmanager->isValidDestinationAddress(destNode->par("address").longValue());
+
+
+        }
+        changeNodesConnectionRiskLevel((*nodesId)[srcNodeId],(*nodesId)[destNodeId]);
+
+
+    }
+    }
+
+    delete nodesId;
+}
+
+*/
 
 
 
 
 
 
-cTopology::Node* NetworkModifier::getNodeById(int id) {
+cTopology::Node* NetworkModifier::getNodeById(int idx) {
 
        for(int i=0; i<topo->getNumNodes(); i++) {
            cTopology::Node* n = topo->getNode(i);
          //  EV << "Node idx" << i <<endl;
-           if(n->getModuleId() == id)
+           if(n->getModuleId() == idx)
                return n;
        }
        return NULL;

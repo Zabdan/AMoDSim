@@ -20,30 +20,36 @@
 #include <string.h>
 #include <omnetpp.h>
 #include <vector>
+#include <AbstractNetworkManager.h>
 
 
 class NetworkModifier : public cSimpleModule{
 
 private:
     cMessage *updateConnectionsMessage;
-    cTopology* topo = new cTopology("topo");
-    double delay = 0.01;
-    double ber = 0;
-    double datarate = 1e6;
+    cTopology* topo;
+    double delay;
+    double ber;
+    double datarate;
+    cPar *timeLimit;
+    AbstractNetworkManager * netmanager;
+
 
 
 protected:
 
    virtual void initialize();
-   virtual void handleMessage(cMessage *msg);
-   virtual void connect(cGate *src, cGate *dest);
+ //  virtual void handleMessage(cMessage *msg);
+ //  virtual void connect(cGate *src, cGate *dest);
    virtual cTopology::Node* getNodeById(int idx);
  //  cModule* getNodeByName(const char *node);
-   virtual int disconnectNodes( int srcNodeId, int destNodeId, int count=0);
-   virtual int connectNodes( int srcNodeId, int destNodeId, int count=0);
-   virtual void rndChangeConnections();
-   virtual std::vector<int> *getNodesId();
-   virtual int disconnectFromAllNodes(int srcNodeId);
+ //  virtual int disconnectNodes( int srcNodeIdx, int destNodeIdx, int count=0);
+ //  virtual int connectNodes( int srcNodeIdx, int destNodeIdx, int count=0);
+//   virtual int changeNodesConnectionRiskLevel(int srcNodeIdx, int destNodeIdx, int count=0);
+//   virtual void rndChangeConnections();
+//   virtual void rndChangeConnectionsRiskLevel();
+ //  virtual std::vector<int> *getNodesId();
+   virtual void  setRiskZone();
 
 
 

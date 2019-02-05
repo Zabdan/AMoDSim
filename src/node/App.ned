@@ -9,6 +9,7 @@ simple App like IApp
         int address;  			//local node address
         volatile int seatsPerVehicle = default(1);
         @display("i=block/browser");
+        string vehicleTypesFile = "../src/common/vehicleTYpes.txt";
         
     gates:
         input in;

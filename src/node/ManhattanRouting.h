@@ -17,10 +17,12 @@
 #define __AMOD_SIMULATOR_MANHATTANROUTING_H_
 
 #include <omnetpp.h>
+#include "ManhattanNetworkManager.h"
 
 class ManhattanRouting : public cSimpleModule
 {
 private:
+    AbstractNetworkManager* netmanager;
     int myAddress;
     int myX;
     int myY;
@@ -32,7 +34,9 @@ private:
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
-    virtual bool isConnectedGate(int outGateIndex);
+ //   virtual bool isConnectedGate(int outGateIndex, int indexNode);
+ //   virtual bool isMinRiskLevelRoute(int outGateIndex);
+//    virtual bool isAllEqualRiskLevelRoute();
 };
 
 #endif

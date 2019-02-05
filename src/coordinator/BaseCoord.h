@@ -24,6 +24,8 @@
 #include "StopPointOrderingProposal.h"
 #include <list>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
 
 class BaseCoord : public cSimpleModule, cListener{
 
@@ -100,6 +102,11 @@ private:
         virtual void updateStateElapsedTime(int vehicleID, int stateID);
         virtual int getMaxVehiclesSeats();
         virtual void collectPercentileStats(std::string sigName, std::vector<double> values);
+
+
+        virtual std::map<int,int> readAllRequestVeichleTypesMatching();
+        virtual bool checkRequestVeichleTypesMatching(int requestTypeId, int veichleTypeId);
+        virtual std::map<int, std::string> readAllRequestTypes();
 
     public:
         StopPoint* getNextStopPoint(int vehicleID);

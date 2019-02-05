@@ -27,6 +27,8 @@ private:
 protected:
     static int nextID;
     int id;
+    std::string type;
+    int typeId;
 
     StopPoint *pickup;
     StopPoint *dropoff;
@@ -51,6 +53,10 @@ public:
     virtual void setVehicleID(int vehicleID);
     virtual int getDistanceToPickup() const;
     virtual void setDistanceToPickup(int distanceToPickup);
+    virtual void setType(std::string type);
+    virtual void setTypeID(int typeId);
+    virtual std::string getType() const;
+    virtual int getTypeID() const;
 };
 
 #endif /* TRIPREQUEST_H_ */

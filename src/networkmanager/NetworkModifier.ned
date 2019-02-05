@@ -18,5 +18,8 @@ package src.networkmanager;
 
 
 simple NetworkModifier {
+    
+    double timeLimit @unit(s) = default(5000s);
+    
 
 }
