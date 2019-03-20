@@ -104,11 +104,19 @@ private:
         virtual void collectPercentileStats(std::string sigName, std::vector<double> values);
 
 
+        virtual TripRequest *updateRequestPriority(std::list<StopPoint *> spList);
+        virtual TripRequest *getOldestPendingRequest(int priority, double oldestTime);
+        virtual int getMinPriority(std::list<StopPoint *> spList);
+        virtual double getOldestTime(std::list<StopPoint *> spList, int priority);
+        virtual int deleteSPFromVehicleList(int vehicleID, int requestID);
+        virtual int getMaxRequestPriority();
+
         virtual std::map<int,int> readAllRequestVeichleTypesMatching();
         virtual bool checkRequestVeichleTypesMatching(int requestTypeId, int veichleTypeId);
         virtual std::map<int, std::string> readAllRequestTypes();
 
     public:
+        void printSPListInfo(int vehicleID);
         StopPoint* getNextStopPoint(int vehicleID);
         StopPoint* getCurrentStopPoint(int vehicleID);
         void registerVehicle (Vehicle *v, int address);

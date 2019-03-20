@@ -135,6 +135,10 @@ int NetworkModifier::changeNodesConnectionRiskLevel ( int srcNodeIdx, int destNo
 
 */
 
+
+
+
+
 void  NetworkModifier::setRiskZone() {
     int riskZoneExp = this->getParentModule()->par("riskZoneExp").doubleValue();
     std::vector<std::pair<int,int> > *coords = netmanager->getCenteredSquare(riskZoneExp);

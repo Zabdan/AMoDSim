@@ -41,7 +41,7 @@ protected:
     virtual cModule * getNodeFromCoords(int x, int y);
   //  virtual void readAlldestNodesRequestsMatching(std::map<int, int> *nRMatch) override;
   //  virtual void readAllNodeTypes(std::map<int, std::string> *nodeTypes) override;
-    virtual std::vector<cModule *> * getAllDestinationNodes(int nodeTypeId) override;
+    virtual std::vector<cModule *>  getAllDestinationNodes(int nodeTypeId) override;
     virtual void setWeight(cTopology *topo);
     virtual cModule *getNodeFromAddress(int address);
     cTopology::Node *calculatePath(int srcAddr, int destAddr);
@@ -56,7 +56,8 @@ protected:
     virtual bool isValidAddress(int nodeAddr) override;
     virtual bool isValidDestinationAddress(int requestTypeId,int destAddr) override;
     virtual bool isValidDestinationAddress(int destAddr) override;
-    virtual int getValidDestinationAddress(int requestTypeId) override;
+  //  virtual int getValidDestinationAddress(int requestTypeId) override;
+    virtual int getCloserValidDestinationAddress(int srcAddress, int requestTypeId)override;
     virtual std::vector<std::pair<int,int>> *getCenteredSquare(int mult) override;
 
 

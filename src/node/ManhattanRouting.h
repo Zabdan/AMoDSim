@@ -18,11 +18,13 @@
 
 #include <omnetpp.h>
 #include "ManhattanNetworkManager.h"
+#include "BaseCoord.h"
 
 class ManhattanRouting : public cSimpleModule
 {
 private:
     AbstractNetworkManager* netmanager;
+    BaseCoord *tcoord;
     int myAddress;
     int myX;
     int myY;

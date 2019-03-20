@@ -32,6 +32,7 @@ void ManhattanRouting::initialize()
     yChannelLength = getParentModule()->getParentModule()->par("yNodeDistance");
     netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
 
+    tcoord = check_and_cast<BaseCoord *>(getParentModule()->getParentModule()->getSubmodule("tcoord"));
     EV << "I am node " << myAddress << ". My X/Y are: " << myX << "/" << myY << endl;
 }
 
@@ -40,12 +41,28 @@ void ManhattanRouting::handleMessage(cMessage *msg)
     Vehicle *pk = check_and_cast<Vehicle *>(msg);
     int destAddr = pk->getDestAddr();
 
+
+
+    //DEBUG TEST
+    /*    if(simTime().dbl() > 17900 && myAddress == 21){
+                EV<<"Pk stopped!"<<endl;
+                tcoord->printSPListInfo(3);
+                return;
+            }*/
+
+
+
     //If this node is the destination, forward the vehicle to the application level
     if (destAddr == myAddress)
     {
+
         EV << "Vehicle arrived in the stop point " << myAddress << ". Traveled distance: " << pk->getTraveledDistance() << endl;
+
+      //    else {
+
         send(pk, "localOut");
         return;
+       //   }
     }
     if(msg->isSelfMessage())   {
       //  if (ev.isGUI()) getParentModule()->bubble("RETRY TO SEND pk!");
@@ -61,7 +78,15 @@ void ManhattanRouting::handleMessage(cMessage *msg)
     EV <<"Pk dest address "<<pk->getDestAddr()<<"  destX"<<destX<< " destY"<<destY<<endl;
 
        // cGate * g = netmanager->getGateToDestination(myAddress, pk->getDestAddr());
+
+
+
+
+   // else {
+
+
         int gIndex = netmanager->getOutputGate(myAddress, pk->getDestAddr());
+        distance = netmanager->getChannelLength(myAddress,gIndex);
 /*
     int startIndexToCheck = getParentModule()->getIndex();
     EV<<"Staring Node x"<< myX<<" y "<<myY<<endl;
@@ -117,7 +142,7 @@ void ManhattanRouting::handleMessage(cMessage *msg)
 
         send(pk, "out", gIndex);
 
-
+   // }
 
 
 

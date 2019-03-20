@@ -74,7 +74,7 @@ App::~App()
 
 void App::initialize()
 {
-    myAddress = par("address");   // dove viene settato l'indirizzo?
+    myAddress = par("address");
     seatsPerVehicle = par("seatsPerVehicle");
     alightingTime = getParentModule()->getParentModule()->par("alightingTime");
     boardingTime = getParentModule()->getParentModule()->par("boardingTime");
@@ -96,10 +96,10 @@ void App::initialize()
             // Random generation of vehicle type
             std::map<int, std::string> vTypes = readAllVehicleTypes();
             std::map<int, std::string>::iterator it = vTypes.begin();
-            int firstId = it->first;
+            int firstId = (*it).first;
             it = vTypes.end();
             it--;
-            int lastId = it->first;
+            int lastId = (*it).first;
             int vTypeId = intuniform(firstId, lastId, 3);
             Vehicle *v = new Vehicle();
             v->setTypeId(vTypeId);
@@ -132,8 +132,31 @@ void App::handleMessage(cMessage *msg)
         return ;
     }
 
+
+
+
+
     EV << "received VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops." << endl;
+
+/*
+    if(simTime().dbl() > 28500 ){
+                               EV<<"Pk stopped!"<<endl;
+                               return;
+              }*/
+
+
+
     StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
+
+/*
+     if(simTime().dbl() > 7900 && myAddress == 21){
+                            EV<<"Pk stopped!"<<endl;
+                            return;
+           }
+*/
+
+
+
 
     if (currentStopPoint != NULL && currentStopPoint->getLocation() != -1 && currentStopPoint->getIsPickup())
     {
@@ -142,8 +165,25 @@ void App::handleMessage(cMessage *msg)
         EV << "The vehicle is here! Pickup time: " << simTime() << "; Request time: " << currentStopPoint->getTime() << "; Waiting time: " << waitTimeMinutes << "minutes." << endl;
     }
 
+
+
+
+
+
     //Ask to coordinator for next stop point
     StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
+
+/*
+         if(simTime().dbl() > 7900 && myAddress == 21){
+                                EV<<"Pk stopped!"<<endl;
+                                return;
+               }
+*/
+
+
+
+
+
     if(nextStopPoint != NULL)
     {
         //There is another stop point for the vehicle!
@@ -152,14 +192,19 @@ void App::handleMessage(cMessage *msg)
         vehicle->setDestAddr(nextStopPoint->getLocation());
 
         //Time for boarding or drop-off passengers
-        double delays = (nextStopPoint->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, nextStopPoint->getLocation());  // da chiarire
+        double delays = (nextStopPoint->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, nextStopPoint->getLocation());
         if(delays <0)
             delays=0;
+
+
+
 
         if(nextStopPoint->getLocation() == myAddress)
             sendDelayed(vehicle,delays,"out");
         else
             sendDelayed(vehicle,sendDelayTime+delays,"out");
+
+
     }
 
     //No other stop point for the vehicle. The vehicle stay here

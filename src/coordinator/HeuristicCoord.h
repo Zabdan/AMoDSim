@@ -24,6 +24,7 @@ class HeuristicCoord: public BaseCoord {
 private:
     std::list<StopPointOrderingProposal*> addStopPointToTrip(int vehicleID, std::list<StopPoint*> oldTrip, StopPoint* newSP);
     std::list<double> getResidualTime(std::list<StopPoint*> spl, int requestID);
+    StopPointOrderingProposal* addStopPointToFirstPos(int vehicleID, std::list<StopPoint*> spl, TripRequest* tr);
 
 protected:
     void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) override;

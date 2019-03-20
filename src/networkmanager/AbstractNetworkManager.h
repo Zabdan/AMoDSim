@@ -33,7 +33,7 @@ protected:
     virtual void setDropOffNodes() = 0;
 //    virtual void readAllNodeTypes(std::map<int, std::string> *nodeTypes)0;
   //  virtual void readAlldestNodesRequestsMatching(std::map<int, int> *nRMatch);
-    virtual std::vector<cModule *> * getAllDestinationNodes(int nodeTypeId) = 0;
+    virtual std::vector<cModule *>  getAllDestinationNodes(int nodeTypeId) = 0;
 
 
   public:
@@ -45,7 +45,8 @@ protected:
     virtual bool isValidAddress(int nodeAddr)=0;                     //Check if the specified address is valid
     virtual bool isValidDestinationAddress(int destAddr)=0;
     virtual bool isValidDestinationAddress(int requestTypeId,int destAddr)=0;              //Check if the specified destination address is valid
-    virtual int getValidDestinationAddress(int requestTypeId)=0;    // Get a random valid destination node address
+  //  virtual int getValidDestinationAddress(int requestTypeId)=0;    // Get a random valid destination node address
+    virtual int getCloserValidDestinationAddress(int srcAddress, int requestTypeId)=0;
     virtual cModule*getNodeFromCoords(int x, int y)=0;
     virtual std::vector<std::pair<int,int>> *getCenteredSquare(int mult)=0;
 
@@ -53,6 +54,8 @@ protected:
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
 
 
+
+    // velocita non sepre uguale quindi va calcolata prima la velocita media
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration
     {
         if(acceleration<=0) {additionalTravelTime=0; return 0;}
@@ -74,8 +77,8 @@ protected:
 
 
         std::string line;
-        std::fstream nodeTypesFile(file, std::ios::in);
-           while(getline(nodeTypesFile, line, '\n'))
+        std::fstream f(file, std::ios::in);
+           while(getline(f, line, '\n'))
            {
                if (line.empty() || line[0] == '#')
                    continue;
@@ -99,10 +102,8 @@ protected:
 
 
         std::string line;
-      //  std::fstream nodeTypesFile("C:\\omnetpp-4.6\\newprojects\\CopyofAMoD_Simulator\\src\\networkmanager\\nodeTypes.txt", std::ios::in);
-        std::fstream nodeTypesFile(file, std::ios::in);
-      //  EV<<"File opened"<<nodeTypesFile.is_open()<<endl;
-           while(getline(nodeTypesFile, line, '\n'))
+        std::fstream f(file, std::ios::in);
+           while(getline(f, line, '\n'))
            {
               // EV<<"Line "<<endl;
                if (line.empty() || line[0] == '#')
@@ -115,7 +116,7 @@ protected:
                // get fields from tokens
                int requestTypeId = atoi(tokens[0].c_str());
                int nodeTypeId = atoi(tokens[1].c_str());
-              // EV<<"Node type id"<<nodeTypeId<<" name"<<nodeTypeName<<endl;
+             //  EV<<"Node type id"<<nodeTypeId<<" requestTypeId"<<requestTypeId<<endl;
                nRMatch->insert(std::pair<int, int>(requestTypeId, nodeTypeId));
     }
 
@@ -123,6 +124,70 @@ protected:
 
 
     }
+
+
+    void  readAllRiskLevels(std::map<int, std::string> *rLevels, const char * file) {
+
+
+           std::string line;
+         //  std::fstream nodeTypesFile("C:\\omnetpp-4.6\\newprojects\\CopyofAMoD_Simulator\\src\\networkmanager\\nodeTypes.txt", std::ios::in);
+           std::fstream f(file, std::ios::in);
+         //  EV<<"File opened"<<nodeTypesFile.is_open()<<endl;
+              while(getline(f, line, '\n'))
+              {
+                 // EV<<"Line "<<endl;
+                  if (line.empty() || line[0] == '#')
+                      continue;
+                //  EV<<"Line "<< line<<endl;
+                  std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+                  if (tokens.size() != 2)
+                      throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+
+                  // get fields from tokens
+                  int riskLevel = atoi(tokens[0].c_str());
+                  std::string displayString =  tokens[1].c_str();
+                 // EV<<"Node type id"<<nodeTypeId<<" name"<<nodeTypeName<<endl;
+                  rLevels->insert(std::pair<int, std::string>(riskLevel, displayString));
+       }
+
+
+
+
+       }
+
+
+
+    void  readAllRiskDelayFactorMatching(std::map<int, double> *rDMatch, const char * file) {
+
+
+           std::string line;
+         //  std::fstream nodeTypesFile("C:\\omnetpp-4.6\\newprojects\\CopyofAMoD_Simulator\\src\\networkmanager\\nodeTypes.txt", std::ios::in);
+           std::fstream f(file, std::ios::in);
+         //  EV<<"File opened"<<nodeTypesFile.is_open()<<endl;
+              while(getline(f, line, '\n'))
+              {
+                 // EV<<"Line "<<endl;
+                  if (line.empty() || line[0] == '#')
+                      continue;
+                //  EV<<"Line "<< line<<endl;
+                  std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+                  if (tokens.size() != 2)
+                      throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+
+                  // get fields from tokens
+                  int riskLevel = atoi(tokens[0].c_str());
+                  double delayIncrFactor =  atof(tokens[1].c_str());
+                 // EV<<"Node type id"<<nodeTypeId<<" name"<<nodeTypeName<<endl;
+                  rDMatch->insert(std::pair<int, double>(riskLevel, delayIncrFactor));
+       }
+
+
+
+
+       }
+
+
+
 
 
 

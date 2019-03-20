@@ -1,0 +1,5 @@
+#Rislk levels with  display string
+# rLevel  delayIncreaseFactor
+   0     9.7
+   1     2.0
+   2     0

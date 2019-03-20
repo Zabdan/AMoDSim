@@ -26,14 +26,21 @@ network AMoD
         double xTravelTime @unit(s) = (dropUnit(xNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
         double yTravelTime @unit(s) = (dropUnit(yNodeDistance)/dropUnit(speed))*1s; //time needed to travel a street at cruise speed
         
-      
-        double riskZoneExp = default(0);
        
         //------Coordinator type--------
         string coordType = default ("RadioTaxiCoord");
         
         //------NetworkManager type--------
         string netmanagerType = default ("ManhattanNetworkManager");
+        
+         // Risk zone expansion factor
+        double riskZoneExp = default(0);         
+        
+        // Max delay 
+        double maxTravelTime @unit(s)=  80000s;
+        
+        //
+       // double maxRiskChannelsPerc = 28; 
         
          
         
@@ -79,6 +86,8 @@ network AMoD
                 x=index % width;
                 y=index / width;
                 type = "PickUp";
+              
+                    
                 @display("p=,,m,$width,$xNodeDistance,$yNodeDistance");
             gates:
                 port[4];

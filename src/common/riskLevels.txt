@@ -1,0 +1,5 @@
+#Rislk levels with  display string
+# level  string
+   0     none
+   1     red
+   2     white

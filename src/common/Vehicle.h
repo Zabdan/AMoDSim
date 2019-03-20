@@ -29,6 +29,7 @@ class Vehicle: public Packet {
         int state;
 
 
+
     public:
     //    enum class Types{EMERGENCY_0=0, EMERGENCY_1=1, EMERGENCY_2=2};
         Vehicle();

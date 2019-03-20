@@ -68,10 +68,11 @@ TripRequestSubmitter::~TripRequestSubmitter()
 void TripRequestSubmitter::initialize()
 {
     bool reqGen = getParentModule()->par("isRequestGenerator").boolValue();
-    if(!reqGen) {
+  /*  if(!reqGen) {
         EV<<"TripRequest not generated for node x,y"<<getParentModule()->par("x").longValue()<<" "<<getParentModule()->par("y").longValue()<<endl;
         return;
-    }
+    }*/
+    if(reqGen) {
     myAddress = par("address");
     destAddresses = par("destAddresses");
     minTripLength = par("minTripLength");
@@ -98,6 +99,7 @@ void TripRequestSubmitter::initialize()
   //  }
 
 }
+}
 
 
 void TripRequestSubmitter::handleMessage(cMessage *msg)
@@ -108,10 +110,21 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
     {
         TripRequest *tr = nullptr;
 
+     //   if(simTime().dbl() > 7920 )
+       //     return;
+
+/*
+        if(simTime().dbl() > 38000 ){
+                                   EV<<"Pk stopped!"<<endl;
+                                   return;
+                  }*/
+
 
         tr = buildTripRequest();
          std::string s("REQUEST-"+tr->getType());
         if (ev.isGUI()) getParentModule()->bubble(s.c_str());
+
+
 
         EV << "Requiring a new trip of type"<<tr->getType()<< " from/to: " << tr->getPickupSP()->getLocation() << "/" << tr->getDropoffSP()->getLocation() << ". I am node: " << myAddress << endl;
         EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
@@ -137,16 +150,7 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
     double simtime = simTime().dbl();
 
 
-    // Generate a random destination address for the request
-   /* int destAddress = intuniform(0, destAddresses-1, 3);
-    while (destAddress == myAddress || netmanager->getSpaceDistance(myAddress, destAddress) < minTripLength || !netmanager->isValidDestinationAddress(destAddress))
-        destAddress = intuniform(0, destAddresses-1, 3);*/
 
-
-
-
-   // int firstType = static_cast<int>(TripRequest::Types::EMERGENCY_0);
-  //  int lastType = static_cast<int>(TripRequest::Types::EMERGENCY_2);
 
 
     // generate a  dinamic request type
@@ -156,14 +160,30 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
     it = reqTypes.end();
     it--;
     int lastId = it->first;
-    int requestId = intuniform(firstId, lastId, 3);
+    int requestId = intuniform(firstId+1, lastId, 3);      // test type 1 end type 2
     request->setTypeID(requestId);
-    request->setType(reqTypes[requestId]);
+   request->setType(reqTypes[requestId]);
+   // request->setTypeID(2);
+  //  request->setType(reqTypes[2]);
 
-    int destAddress =  netmanager->getValidDestinationAddress(request->getTypeID());
 
-  //  bool valid = netmanager->isValidDestinationAddress(121, destAddress);
-   // EV <<"IS VALID? "<<valid<<endl;
+
+
+   // TEST FOR COORDINATOR
+   if(myAddress == 15 ) {
+        request->setTypeID(2);
+        request->setType(reqTypes[2]);
+   }
+   else {
+       request->setTypeID(1);
+       request->setType(reqTypes[1]);
+   }
+
+
+
+   // int destAddress =  netmanager->getValidDestinationAddress(request->getTypeID());
+    int destAddress =  netmanager->getCloserValidDestinationAddress(myAddress, request->getTypeID());
+
 
     StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
     pickupSP->setXcoord(x_coord);

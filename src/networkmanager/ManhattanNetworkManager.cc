@@ -37,6 +37,8 @@ void ManhattanNetworkManager::initialize()
 
     additionalTravelTime = setAdditionalTravelTime(parentModule->par("speed"), parentModule->par("acceleration"));
     setDropOffNodes();
+
+    EV<<"SPEEEED "<<parentModule->par("speed").doubleValue()<<endl;
 }
 
 /**
@@ -57,38 +59,6 @@ double ManhattanNetworkManager::getSpaceDistance(int srcAddr, int dstAddr)
         linkOut = linkOut->getRemoteNode()->getPath(0);
     }
 
-
-         /*   if(n != NULL) {
-               int dist = n->getDistanceToTarget();
-               double length= 0.0;
-               for(int i  = 0 ; i<dist; i += length) {
-                   cTopology::LinkOut *linkOut = n->getPath(0);
-                           spaceDistance += linkOut->getLocalGate()->getChannel()->par("length").doubleValue();
-                           n = linkOut->getRemoteNode();
-                           length = linkOut->getLocalGate()->getChannel()->par("length").doubleValue()*linkOut->getWeight();
-               }
-
-            }*/
-         //  }
-
-
-
-
-
-/*
-
-
-
-       int xSource = srcAddr % rows;
-       int xDest = dstAddr % rows;
-
-       int ySource = srcAddr / rows;
-       int yDest = dstAddr / rows;
-
-       spaceDistance += abs(xSource - xDest) * xChannelLength;
-       spaceDistance += abs(ySource - yDest) * yChannelLength;
-
-*/
 
 
        return spaceDistance;
@@ -155,6 +125,7 @@ double ManhattanNetworkManager::getTimeDistance(int srcAddr, int dstAddr)
            timeDistance += additionalTravelTime;
 
 
+           EV<<"TIME DIST TO TARGET FOR NODE "<<n->getModuleId()<<" "<<timeDistance<<endl;
 
 
     return timeDistance;
@@ -254,8 +225,8 @@ bool ManhattanNetworkManager::isValidDestinationAddress(int requestTypeId,int de
            }
        }
      //  EV<<"Request type id check nodeT"<<nodeTypeId<<"req id"<<requestTypeId<<endl;
-       std::vector<cModule *> *nodes = getAllDestinationNodes(nodeTypeId);
-       for(std::vector<cModule *>::iterator it = nodes->begin(); it != nodes->end(); it++) {
+       std::vector<cModule *> nodes = getAllDestinationNodes(nodeTypeId);
+       for(std::vector<cModule *>::iterator it = nodes.begin(); it != nodes.end(); it++) {
         //   EV<<"Address check  nodeT"<<(*it)->par("address").longValue()<<"destAddr"<<destAddr<<endl;
            int addr = (*it)->par("address").longValue();
            if(addr == destAddr)
@@ -308,7 +279,7 @@ bool ManhattanNetworkManager::isValidDestinationAddress(int destAddr) {
 std::vector<std::pair<int,int>> * ManhattanNetworkManager::getCenteredSquare(int mult) {
   std::vector<std::pair<int,int>> *coords;
   int dim = this->getParentModule()->par("width").doubleValue();
-  EV<<"DIM"<<dim<<endl;
+ // EV<<"DIM"<<dim<<endl;
   int expansion = 0;
   if(dim > 4) {
   int par = dim % 2;
@@ -350,7 +321,7 @@ return coords;
 
 
 
-
+/*
 
 int ManhattanNetworkManager::getValidDestinationAddress(int requestTypeId) {
     std::map<int, int> *nRMatch(new std::map<int, int>());
@@ -361,10 +332,10 @@ int ManhattanNetworkManager::getValidDestinationAddress(int requestTypeId) {
             nodeTypeId = (*it).second;
         }
     }
-    std::vector<cModule *> *nodes = getAllDestinationNodes(nodeTypeId);
+    std::vector<cModule *> nodes = getAllDestinationNodes(nodeTypeId);
     std::vector<cModule *>::iterator it = nodes->begin();
-    if(nodes->size() > 1) {
-        int num = intuniform(0, nodes->size()-1);
+    if(nodes.size() > 1) {
+        int num = intuniform(0, nodes.size()-1);
         it+= num;
         return (*it)->par("address").longValue();
 
@@ -373,6 +344,54 @@ int ManhattanNetworkManager::getValidDestinationAddress(int requestTypeId) {
         return (*it)->par("address").longValue();
 
 }
+
+*/
+
+int ManhattanNetworkManager::getCloserValidDestinationAddress(int srcAddress, int requestTypeId) {
+    std::map<int, int> *nRMatch(new std::map<int, int>());
+    readAlldestNodesRequestsMatching(nRMatch, par("destNodesRequestMatchingFile").stringValue() );
+    int nodeTypeId;
+    for(std::map<int, int>::iterator it = nRMatch->begin(); it != nRMatch->end(); it++) {
+        if((*it).first == requestTypeId) {
+            nodeTypeId = (*it).second;
+        }
+    }
+    std::vector<cModule *> nodes = getAllDestinationNodes(nodeTypeId);
+    std::vector<cModule *>::iterator it = nodes.begin();
+
+    cModule *nodeCloser;
+    int dist;
+    int addr;
+    int i=0;
+
+    while(it!= nodes.end()) {
+
+        int distT = getTimeDistance(srcAddress, (*it)->par("address").doubleValue());
+
+
+        if(i == 0) {
+            dist = distT;
+            nodeCloser = *it;
+        }
+        else {
+            if(dist > distT) {
+                dist = distT;
+               nodeCloser = *it;
+            }
+        }
+        i++;
+        it++;
+    }
+ //   if(n != NULL)
+  //  EV<<"ADRRRRRRRr"<<n->getId()<<endl;
+    return nodeCloser->par("address").doubleValue();
+
+   //   return 1;
+
+}
+
+
+
 
 
 
@@ -419,27 +438,27 @@ void ManhattanNetworkManager::setWeight(cTopology *topo) {
 
 
 
-std::vector<cModule *> * ManhattanNetworkManager::getAllDestinationNodes(int nodeTypeId) {
+std::vector<cModule *>  ManhattanNetworkManager::getAllDestinationNodes(int nodeTypeId) {
 
-    std::vector<cModule *> *destNodes(new std::vector<cModule *>(0));
+    std::vector<cModule *> destNodes(0);
 
 
        for(int i= 0; i<rows; i++) {
               cModule *node = getNodeFromCoords(0,i);
               if(node->par("typeId").longValue() == nodeTypeId)
-                destNodes->push_back(node);
+                destNodes.push_back(node);
               node = getNodeFromCoords(columns-1, i);
               if(node->par("typeId").longValue() == nodeTypeId)
-                destNodes->push_back(node);
+                destNodes.push_back(node);
           }
 
        for(int i = 1; i<columns-1; i++) {
            cModule *node = getNodeFromCoords(i,0);
            if(node->par("typeId").longValue() == nodeTypeId)
-             destNodes->push_back(node);
+             destNodes.push_back(node);
            node = getNodeFromCoords(i, rows-1);
            if(node->par("typeId").longValue() == nodeTypeId)
-              destNodes->push_back(node);
+              destNodes.push_back(node);
        }
 
        return destNodes;
@@ -453,10 +472,10 @@ std::vector<cModule *> * ManhattanNetworkManager::getAllDestinationNodes(int nod
 void ManhattanNetworkManager::setDropOffNodes() {
     std::map<int, std::string> *nodeTypes(new std::map<int, std::string>());
     readAllNodeTypes(nodeTypes, par("nodeTypesFile").stringValue());
-    EV<<"Nodes readed: "<<nodeTypes->size()<<endl;
+    //EV<<"Nodes readed: "<<nodeTypes->size()<<endl;
 
     std::vector<std::pair<int,int>> coords(0);
-    EV <<"Node vector size "<<coords.size()<<endl;
+    //EV <<"Node vector size "<<coords.size()<<endl;
    // std::vector<std::pair<int,int>>::iterator it;
 
     for(int i= 0; i<rows; i++) {
@@ -471,7 +490,7 @@ void ManhattanNetworkManager::setDropOffNodes() {
 
   int i = 0;
   for(auto &c:coords) {
-      EV<< "X "<<"Y "<<c.first<<" "<<c.second<<endl;
+    //  EV<< "X "<<"Y "<<c.first<<" "<<c.second<<endl;
       cModule *node = getNodeFromCoords(c.first, c.second);
      // EV<<"Destination Node x"<<node->par("x").longValue()<<" y "<<node->par("y").longValue()<<endl;
       if (i ==  0) {
@@ -482,14 +501,14 @@ void ManhattanNetworkManager::setDropOffNodes() {
                     cPar &reqGen = node->par("isRequestGenerator");
                     reqGen.setBoolValue(false);
 
-                    EV<<"Destination Node x"<<node->par("x").longValue()<<" y "<<node->par("y").longValue()<<": Hospital"<<endl;
+                //    EV<<"Destination Node x"<<node->par("x").longValue()<<" y "<<node->par("y").longValue()<<": Hospital"<<endl;
                 }
 
             }
       }
       else {
           for(std::map<int, std::string>::iterator it = nodeTypes->begin(); it!= nodeTypes->end(); it++) {
-                           EV<<"TypeName "<<(*it).second<<endl;
+                       //    EV<<"TypeName "<<(*it).second<<endl;
                            if((*it).second.compare("FirstAid")==0) {
                             cPar &typeId =  node->par("typeId");
                             cPar &type =  node->par("type");
@@ -498,7 +517,7 @@ void ManhattanNetworkManager::setDropOffNodes() {
                             type.setStringValue((*it).second);
                             reqGen.setBoolValue(false);
 
-                            EV<<"Destination Node x"<<node->par("x").longValue()<<" y "<<node->par("y").longValue()<<": Type"<<type.stdstringValue()<<endl;
+                        //    EV<<"Destination Node x"<<node->par("x").longValue()<<" y "<<node->par("y").longValue()<<": Type"<<type.stdstringValue()<<endl;
                         }
                     }
       }

@@ -9,5 +9,7 @@ simple AdaptiveNetworkManager like INetworkManager
         bool onlineRouting = default(false);
         string nodeTypesFile = default("../src/common/nodeTypes.txt");   
         string destNodesRequestMatchingFile = "../src/common/destNodesRequestMatching.txt"; 
+        string riskLevelsFile = "../src/common/riskLevels.txt"; 
+        string riskDelIncrFactFile = "../src/common/riskLevelIncrDelMatching.txt"; 
         @display("i=block/network2_l");      
 }

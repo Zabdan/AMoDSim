@@ -24,8 +24,12 @@
 class AdaptiveNetworkManager : public AbstractNetworkManager
 {
 private:
+    int rows;
+    int columns;
+    double MAX_TRY;
+    double MAX_DELAY;
     cTopology* topo;
-    cMessage* updateConnectionsMessage;
+    cMessage* updateWeightMessage;
     std::map<int,int> indexTable;
     std::map<int, std::map<int,int>> rtable;     //RoutingTable
     std::map<int, std::map<int,double>> dtable;  //Time-Distance table
@@ -38,16 +42,28 @@ private:
     virtual double timeDistanceToTarget(cTopology::Node *thisNode);
     virtual double spaceDistanceToTarget(cTopology::Node *thisNode);
     virtual void updateTables(int destAddress);
+  //  virtual void updateAllTables();
 
+    virtual cTopology::Node *calculatePath(int srcAddr, int destAddr);
+    virtual void setWeight(cTopology *topo);
 
-    virtual void setWeight();
+    virtual void setRiskLevel(cTopology::Node *srcNode, cTopology::Node *destNode, double riskLevel);
+    virtual void setAllWeight();
+   // virtual void setMaxRiskAndWeight(cTopology::Node*srcNode, cTopology::Node*destNode);
+  //  virtual void setWeight(cTopology::Node *srcNode, cTopology::Node *destNode, double weight);
+    virtual void updateWeight(cTopology::Node *srcNode, cTopology::Node *destNode);
+    virtual void updateChannelDelay(cTopology::Node *srcNode, cTopology::Node *destNode);
+    virtual int getMaxRisk();
+    virtual  void checkAndSetMaxRiskAndWeight(cTopology::Node *srcNode, cTopology::Node *destNode);
   //  virtual void readAllNodeTypes(std::map<int, std::string> *nodeTypes) override;
   //  virtual void readAlldestNodesRequestsMatching(std::map<int, int> *nRMatch) override;
-    virtual std::vector<cModule *> * getAllDestinationNodes(int nodeTypeId) override;
-    std::vector<cModule *> *getAllDestinationNodes();
-    virtual double calculateEccentricity(int srcAddr);
-    virtual double calculateEccMax(std::map<cModule *, double> *nodesEcc);
+    virtual std::vector<cModule *> getAllDestinationNodes(int nodeTypeId) override;
+    std::vector<cModule *> getAllDestinationNodes();
+//    virtual double calculateEccentricity(int srcAddr);
+  //  virtual double calculateEccMax(std::map<cModule *, double> *nodesEcc);
     virtual void setDropOffNodes() override;
+    virtual std::pair< cTopology::Node*, cTopology::Node*> getCenteredSquareRndLinkedNodes();
+
 
 
 
@@ -74,7 +90,8 @@ private:
     virtual bool isValidAddress(int nodeAddr) override;
     virtual bool isValidDestinationAddress(int requestTypeId,int destAddr) override;
     virtual bool isValidDestinationAddress(int destAddr) override;
-    virtual int getValidDestinationAddress(int requestTypeId) override;
+ //   virtual int getValidDestinationAddress(int requestTypeId) override;
+    virtual int getCloserValidDestinationAddress(int srcAddress, int requestTypeId)override;
     virtual cModule*getNodeFromCoords(int x, int y) override;
     virtual std::vector<std::pair<int,int>> *getCenteredSquare(int mult) override;
 };
