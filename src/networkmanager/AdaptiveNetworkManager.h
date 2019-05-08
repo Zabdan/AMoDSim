@@ -20,6 +20,7 @@
 #include <AbstractNetworkManager.h>
 #include<iostream>
 #include<fstream>
+#include<algorithm>
 
 class AdaptiveNetworkManager : public AbstractNetworkManager
 {
@@ -32,8 +33,9 @@ private:
     cMessage* updateWeightMessage;
     std::map<int,int> indexTable;
     std::map<int, std::map<int,int>> rtable;     //RoutingTable
-    std::map<int, std::map<int,double>> dtable;  //Time-Distance table
-    std::map<int, std::map<int,double>> sdtable; //Space-Distance table
+    //std::map<int, std::map<int,int>> *rtable = new std::map<int, std::map<int,int>>();     //RoutingTable
+    std::map<int, std::map<int,double>> *dtable = new std::map<int, std::map<int,double>>();  //Time-Distance table
+    std::map<int, std::map<int,double>> *sdtable = new std::map<int, std::map<int,double>>(); //Space-Distance table
     std::map<int, std::map<int,double>> cltable; //Channel length table
 
   protected:
@@ -41,9 +43,11 @@ private:
     virtual void handleMessage(cMessage *msg) override;
     virtual double timeDistanceToTarget(cTopology::Node *thisNode);
     virtual double spaceDistanceToTarget(cTopology::Node *thisNode);
-    virtual void updateTables(int destAddress);
+    virtual void updateTables( int destAddress);
   //  virtual void updateAllTables();
 
+
+    virtual bool checkForGoodPath(int srcAddr, int dstAddr);
     virtual cTopology::Node *calculatePath(int srcAddr, int destAddr);
     virtual void setWeight(cTopology *topo);
 
@@ -54,7 +58,7 @@ private:
     virtual void updateWeight(cTopology::Node *srcNode, cTopology::Node *destNode);
     virtual void updateChannelDelay(cTopology::Node *srcNode, cTopology::Node *destNode);
     virtual int getMaxRisk();
-    virtual  void checkAndSetMaxRiskAndWeight(cTopology::Node *srcNode, cTopology::Node *destNode);
+    virtual  bool checkAndSetMaxRiskAndWeight(cTopology::Node *srcNode, cTopology::Node *destNode);
   //  virtual void readAllNodeTypes(std::map<int, std::string> *nodeTypes) override;
   //  virtual void readAlldestNodesRequestsMatching(std::map<int, int> *nRMatch) override;
     virtual std::vector<cModule *> getAllDestinationNodes(int nodeTypeId) override;
@@ -62,8 +66,11 @@ private:
 //    virtual double calculateEccentricity(int srcAddr);
   //  virtual double calculateEccMax(std::map<cModule *, double> *nodesEcc);
     virtual void setDropOffNodes() override;
-    virtual std::pair< cTopology::Node*, cTopology::Node*> getCenteredSquareRndLinkedNodes();
-
+    virtual void setPickUpNodes();
+    //virtual std::pair< cTopology::Node*, cTopology::Node*> getCenteredSquareRndLinkedNodes(int seed);
+    virtual std::pair< int, int> getCenteredSquareRndLinkedNodes(int seed);
+    void setRedZone();
+    cTopology::Node* getNodeByID(int idx);
 
 
 

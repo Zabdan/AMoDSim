@@ -7,11 +7,11 @@ module Node
 {
     parameters:
         int address;
-        string type = default("PickUp");
-        int typeId =  default(0);
+        string type = default("");
+        int typeId =  default(-1);
         int x;
         int y;
-        bool isRequestGenerator = default(false);
+        volatile bool isRequestGenerator = default(false);
         string appType;
         string routingType = default("Routing");
         @display("i=misc/node_vs,gold");
@@ -19,7 +19,7 @@ module Node
         inout port[];
     
     submodules:
-        trsubmitter: TripRequestSubmitter if isRequestGenerator {
+        trsubmitter: TripRequestSubmitter  {
         	parameters:
                 address = address;
                 @display("p=180,60");

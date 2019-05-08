@@ -22,7 +22,7 @@ void AdaptiveNetworkManager::initialize()
 
     rows = getParentModule()->par("width");
     columns = getParentModule()->par("height");
-    MAX_DELAY = getParentModule()->par("maxTravelTime");
+    MAX_DELAY = getParentModule()->par("maxChDelay");
     MAX_TRY = 0;
 
     bool onlineRouting = par("onlineRouting").boolValue();
@@ -39,6 +39,9 @@ void AdaptiveNetworkManager::initialize()
     nedTypes.push_back("src.node.Node");
     topo->extractByNedTypeName(nedTypes);
 
+    setPickUpNodes();
+    setDropOffNodes();
+    setRedZone();
     setAllWeight();
 
 
@@ -65,18 +68,16 @@ void AdaptiveNetworkManager::initialize()
             int gateIndex = parentModuleGate->getIndex();
 
             rtable[thisAddress].insert(std::make_pair(address, gateIndex));
-            dtable[thisAddress].insert(std::make_pair(address, timeDistanceToTarget(thisNode)));
-            sdtable[thisAddress].insert(std::make_pair(address, spaceDistanceToTarget(thisNode)));
-            cltable[thisAddress].insert(std::make_pair(gateIndex, parentModuleGate->getChannel()->par("length").doubleValue()));
+            (*dtable)[thisAddress].insert(std::make_pair(address, timeDistanceToTarget(thisNode)));
+            (*sdtable)[thisAddress].insert(std::make_pair(address, spaceDistanceToTarget(thisNode)));
+             cltable[thisAddress].insert(std::make_pair(gateIndex, parentModuleGate->getChannel()->par("length").doubleValue()));
 
         }
     }
-    setDropOffNodes();
-    updateWeightMessage = new cMessage("up");
- //   scheduleAt(0, updateWeightMessage);
 
-   // updateConnectionsMessage = new cMessage("updateConnectionsMessage");
-  //  scheduleAt(simTime(), updateConnectionsMessage);
+    updateWeightMessage = new cMessage("up");
+    scheduleAt(0, updateWeightMessage);
+
 
 
 }
@@ -101,24 +102,7 @@ AdaptiveNetworkManager::~AdaptiveNetworkManager()
  */
 double AdaptiveNetworkManager::timeDistanceToTarget(cTopology::Node *thisNode)
 {
-    /*   double hopsToTarget = thisNode->getDistanceToTarget(); //get the hops to reach the target
-    double timeDistance = 0.0;
-    //double weight = 0.0; //Extra weight parameter
 
-    for (int i=0; i<hopsToTarget; i++)
-    {
-        cTopology::LinkOut *linkOut = thisNode->getPath(0);
-        timeDistance += linkOut->getLocalGate()->getChannel()->par("delay").doubleValue();
-        //weight += linkOut->getWeight();
-
-        thisNode = linkOut->getRemoteNode();
-    }
-
-    if(timeDistance != 0)
-        timeDistance+=additionalTravelTime;
-
-    return timeDistance;
-     */
 
     double timeDistance = 0.0;
 
@@ -148,19 +132,7 @@ double AdaptiveNetworkManager::timeDistanceToTarget(cTopology::Node *thisNode)
  */
 double AdaptiveNetworkManager::spaceDistanceToTarget(cTopology::Node *thisNode)
 {
-    //   double distToTarget = thisNode->getDistanceToTarget(); //get the hops to reach the target
-    //  double spaceDistance = 0.0;
-    //double weight = 0.0; //Extra weight parameter
-    /*
-    for (int i=0; i<distToTarget; i++)
-    {
-        cTopology::LinkOut *linkOut = thisNode->getPath(0);
-        spaceDistance += linkOut->getLocalGate()->getChannel()->par("length").doubleValue();
 
-        //weight += linkOut->getWeight();
-        thisNode = linkOut->getRemoteNode();
-
-    }*/
 
     double spaceDistance = 0.0;
     cTopology::LinkOut *linkOut = thisNode->getPath(0);
@@ -181,13 +153,25 @@ double AdaptiveNetworkManager::spaceDistanceToTarget(cTopology::Node *thisNode)
  * @param dstAddress
  * @return
  */
+
+
 double AdaptiveNetworkManager::getSpaceDistance(int srcAddr, int dstAddr)
 {
-    /*  if(sdtable.find(srcAddr) == sdtable.end() || (sdtable[srcAddr].find(dstAddr) == sdtable[srcAddr].end()))
-        updateTables(dstAddr);
-    return sdtable[srcAddr].find(dstAddr)->second;*/
+
+
+
+       bool goodPath = checkForGoodPath(srcAddr, dstAddr);
+       if(goodPath) {
+           return (*sdtable)[srcAddr].find(dstAddr)->second;
+
+       }
+
+
+
+
     cTopology::Node *n = calculatePath(srcAddr, dstAddr);
     double spaceDistance = spaceDistanceToTarget(n);
+    updateTables(dstAddr);
     return spaceDistance;
 
 }
@@ -198,18 +182,68 @@ double AdaptiveNetworkManager::getSpaceDistance(int srcAddr, int dstAddr)
  * @param dstAddress
  * @return
  */
+
+
 double AdaptiveNetworkManager::getTimeDistance(int srcAddr, int dstAddr)
 {
-    /*   if(dtable.find(srcAddr) == dtable.end() || (dtable[srcAddr].find(dstAddr) == dtable[srcAddr].end()))
-        updateTables(dstAddr);
-    EV<<"TIME DISTANCE SRC "<<srcAddr<< " to "<<" DEST"<<dstAddr<<" "<<dtable[srcAddr].find(dstAddr)->second<<endl;
-    return dtable[srcAddr].find(dstAddr)->second;*/
+
+
+    bool goodPath = checkForGoodPath(srcAddr, dstAddr);
+    if(goodPath) {
+        return (*dtable)[srcAddr].find(dstAddr)->second;
+    }
 
     cTopology::Node *n = calculatePath(srcAddr, dstAddr);
+
     double timeDistance = timeDistanceToTarget(n);
+    updateTables(dstAddr);
     return timeDistance;
 
+
 }
+
+
+/**
+ * Verifica se il percorso dal nodo sorgente al nodo destinazione già presente
+ * nella tabella di routing non presenta canali con delay massimo
+ */
+
+bool AdaptiveNetworkManager::checkForGoodPath(int srcAddr, int dstAddr) {
+
+
+    // double timeDistance;
+       bool goodPath = true;
+       int actualAddress = srcAddr;
+       while(actualAddress!=dstAddr) {
+
+       int gateIndex = rtable[actualAddress].find(dstAddr)->second;
+       int indexNode =  indexTable[actualAddress];
+       cTopology::Node *n = topo->getNode(indexNode);
+       for(int i=0; i<n->getNumOutLinks(); i++) {
+           cTopology::LinkOut *linkOut = n->getLinkOut(i);
+           if(linkOut->getLocalGate()->getIndex() == gateIndex) {
+               double tmpDistance = linkOut->getLocalGate()->getChannel()->par("delay").doubleValue();
+               if(tmpDistance == MAX_DELAY) {
+                   goodPath = false;
+
+               }
+            //   timeDistance += tmpDistance;
+               actualAddress=linkOut->getRemoteNode()->getModule()->par("address");
+           }
+
+
+       }
+
+       if(goodPath==false)
+           break;
+
+       }
+
+    return goodPath;
+}
+
+
+
 
 /**
  * Return the outputGate index.
@@ -217,80 +251,47 @@ double AdaptiveNetworkManager::getTimeDistance(int srcAddr, int dstAddr)
  * @param dstAddress
  * @return
  */
+
+
 int AdaptiveNetworkManager::getOutputGate(int srcAddr, int dstAddr)
 {
-    /*  if(rtable.find(srcAddr) == rtable.end() || (rtable[srcAddr].find(dstAddr) == rtable[srcAddr].end()))
-        updateTables(dstAddr);
-    return rtable[srcAddr].find(dstAddr)->second;*/
 
-    cTopology::Node *n = calculatePath(srcAddr, dstAddr);
-    return n->getPath(0)->getLocalGate()->getIndex();
-    //  if(rtable.find(srcAddr) == rtable.end() || (rtable[srcAddr].find(dstAddr) == rtable[srcAddr].end()))
-    //       updateTables(dstAddr);
-    //  rtable[srcAddr].insert(std::make_pair(dstAddr, n->getModule()->par("address").doubleValue()));
-    //  return rtable[srcAddr].find(dstAddr)->second;
+       bool goodPath = checkForGoodPath(srcAddr, dstAddr);
+       if(goodPath) {
+           return rtable[srcAddr].find(dstAddr)->second;
+
+       }
+
+
+       cTopology::Node *n = calculatePath(srcAddr, dstAddr);
+       updateTables(dstAddr);
+        return n->getPath(0)->getLocalGate()->getIndex();
+
 
 
 }
+
+
+
+
+
+
+
 
 
 cTopology::Node *AdaptiveNetworkManager::calculatePath(int srcAddr, int destAddr) {
 
 
 
-
     setAllWeight();
-    //cModule *startNode = getNodeFromAddress(srcAddr);
-    // cModule *destNode = getNodeFromAddress(destAddr);
     int indexSrc = indexTable[srcAddr];
     int indexDest = indexTable[destAddr];
-    cTopology::Node *source;
     //  if(destNode != NULL) {
     topo->calculateWeightedSingleShortestPathsTo(topo->getNode(indexDest));
 
-
-
-    /*
-
-        for(int i = 0; i<topo->getNumNodes(); i++) {
-
-        cTopology::Node *thisNode = topo->getNode(i);
-        if(topo->getNode(indexDest)->getModuleId() == thisNode->getModuleId()) continue;
-
-        cGate *parentModuleGate = thisNode->getPath(0)->getLocalGate();
-        int gateIndex = parentModuleGate->getIndex();
-        int thisAddress = thisNode->getModule()->par("address").doubleValue();
-
-        rtable[thisAddress].insert(std::make_pair(destAddr, gateIndex));
-        dtable[thisAddress].insert(std::make_pair(destAddr, timeDistanceToTarget(thisNode)));
-        sdtable[thisAddress].insert(std::make_pair(destAddr, spaceDistanceToTarget(thisNode)));
-        cltable[thisAddress].insert(std::make_pair(gateIndex, parentModuleGate->getChannel()->par("length").doubleValue()));
-        }*/
-
-
     return topo->getNode(indexSrc);
 
-    /*
-         //   EV<<"CHECK NODE"<<endl;
-            cTopology::Node *n = topo->getNode(i);
-         //   if(destNode->par("address").doubleValue() == n->getModule()->par("address").doubleValue()) {
-          //      EV<<"FOUNDED DEST NODE"<<endl;
 
-
-         //     }
-            if(startNode->par("address").doubleValue() == n->getModule()->par("address").doubleValue()) {
-                source = n;
-             //   cTopology::Node *next = source;
-
-            }
-
-
-
-     //   }
-
-
-   }*/
-    //   return source;
 
 }
 
@@ -307,13 +308,7 @@ void AdaptiveNetworkManager::setWeight(cTopology *topo) {
         for(int j = 0; j<n->getNumOutLinks(); j++) {
             cTopology::LinkOut *l = n->getLinkOut(j);
             double riskLevel = l->getLocalGate()->getTransmissionChannel()->par("riskLevel").doubleValue();
-            // double delay = l->getLocalGate()->getTransmissionChannel()->par("delay").doubleValue();
-            // if(riskLevel > 0)
-            /*   if((n->getModule()->getIndex() == 12 && l->getRemoteNode()->getModule()->getIndex() == 7) || (n->getModule()->getIndex() == 7 && l->getRemoteNode()->getModule()->getIndex() == 12)) {
-                setMaxRiskAndWeight(n,l->getRemoteNode() );
 
-            }*/
-            //    else {
             for(std::map<int, double>::iterator it = rDMatch->begin(); it!= rDMatch->end(); it++) {
                 if((*it).first == riskLevel) {
                     double speed = (*it).second;
@@ -357,91 +352,57 @@ double AdaptiveNetworkManager::getChannelLength(int nodeAddr, int gateIndex)
     return cltable[nodeAddr].find(gateIndex)->second;
 }
 
-/**
- * Update routing and distance tables.
- *
- * @param target address
- */
-void AdaptiveNetworkManager::updateTables(int destAddress)
-{
 
-    cTopology::Node* thisNode = NULL;
-    int thisAddress;
-    int i = indexTable[destAddress];
-    topo->calculateWeightedSingleShortestPathsTo(topo->getNode(i));
 
-    for(int j=0; j<topo->getNumNodes(); j++)
-    {
-        if(i==j) continue;
-        thisNode = topo->getNode(j);
-        thisAddress = thisNode->getModule()->par("address");
-        if (thisNode->getNumPaths()==0) continue; // not connected
 
-        cGate *parentModuleGate = thisNode->getPath(0)->getLocalGate();
-        int gateIndex = parentModuleGate->getIndex();
-        if(thisNode->getModule()->getIndex() == 12 && destAddress == 2)  {
-            EV<< "FROM "<<"12"<<" to "<<"2"<<"gate index "<<gateIndex<<endl;
-        }
 
-        rtable[thisAddress].insert(std::make_pair(destAddress, gateIndex));
-        dtable[thisAddress].insert(std::make_pair(destAddress, timeDistanceToTarget(thisNode)));
-        sdtable[thisAddress].insert(std::make_pair(destAddress, spaceDistanceToTarget(thisNode)));
-        cltable[thisAddress].insert(std::make_pair(gateIndex, parentModuleGate->getChannel()->par("length").doubleValue()));
-    }
+
+void AdaptiveNetworkManager::updateTables(int destAddress) {
+
+   cTopology::Node* thisNode = NULL;
+   int thisAddress;
+   int i = indexTable[destAddress];
+  // topo->calculateWeightedSingleShortestPathsTo(topo->getNode(i));
+
+
+
+   for(int j=0; j<topo->getNumNodes(); j++)
+      {
+          if(i==j) continue;
+          thisNode = topo->getNode(j);
+          thisAddress = thisNode->getModule()->par("address");
+          if (thisNode->getNumPaths()==0) continue; // not connected
+
+          cGate *parentModuleGate = thisNode->getPath(0)->getLocalGate();
+          int gateIndex = parentModuleGate->getIndex();
+          if(thisNode->getModule()->getIndex() == 12 && destAddress == 2)  {
+              EV<< "FROM "<<"12"<<" to "<<"2"<<"gate index "<<gateIndex<<endl;
+          }
+
+      //    EV<< "FROM "<<"SRC"<<" to "<<"thisaddr"<<thisAddress<<" gate: "<<gateIndex<<endl;
+         std::map<int,int> mapR = rtable.find(thisAddress)->second;
+
+
+
+
+
+        rtable[thisAddress][destAddress]=gateIndex;
+       (*dtable)[thisAddress][destAddress]=timeDistanceToTarget(thisNode);
+       (*sdtable)[thisAddress][destAddress]=spaceDistanceToTarget(thisNode);
+       cltable[thisAddress][destAddress]=parentModuleGate->getChannel()->par("length").doubleValue();
+
+
+
+
+      }
+
+
+
 }
 
 
-/*
-cTopology * AdaptiveNetworkManager::getNewTopo() {
 
 
-
-}
- */
-
-/*
-void AdaptiveNetworkManager::updateAllTables() {
-
-       cTopology *newTopo = new cTopology("topo");
-       std::vector<std::string> nedTypes;
-       nedTypes.push_back("src.node.Node");
-       newTopo->extractByNedTypeName(nedTypes);
-
-       for(int j=0; j<topo->getNumNodes(); j++)
-        {
-
-        cTopology::Node *nodeT = topo->getNode(j);
-           for(int i=0; i<newTopo->getNumNodes(); i++) {
-               cTopology::Node *nodeNew = topo->getNode(i);
-               if(nodeNew->getModuleId() == nodeT->getModuleId()) {
-               for(int k = 0; k<nodeT->getNumOutLinks(); k++) {
-                   cTopology::LinkOut *lT = nodeT->getLinkOut(k);
-                   for(int l = 0; l<nodeNew->getNumOutLinks(); l++) {
-                       cTopology::LinkOut *lnewT = nodeNew->getLinkOut(l);
-                       if(lT->getRemoteNode()->getModuleId() == lnewT->getRemoteNode()->getModuleId()) {
-                           lnewT->setWeight(lT->getWeight());
-                           EV<<"Weight of channel "<<nodeNew->getModule()->getIndex()<<"-->"<<lnewT->getRemoteNode()->getModule()->getIndex()<<" has updated to "<<lnewT->getWeight()<<endl;
-
-                       }
-
-                   }
-               }
-
-               }
-           }
-        }
-
-
-     // topo = newTopo;
-    setAllWeight();
-
-    for(std::map<int,int>::iterator it = indexTable.begin(); it != indexTable.end(); it++) {
-         updateTables((*it).first);
-       //  EV<<"PATH TO ADDRESS "<<(*it).first<<" updated"<<endl;
-    }
-
-
-}*/
 
 /**
  * Return the vehicles started from nodeAddr.
@@ -449,6 +410,8 @@ void AdaptiveNetworkManager::updateAllTables() {
  * @param nodeAddr
  * @return
  */
+
+
 int AdaptiveNetworkManager::getVehiclesPerNode(int nodeAddr)
 {
     int nVehicles = 0;
@@ -473,20 +436,8 @@ bool AdaptiveNetworkManager::isValidAddress(int nodeAddr)
         return true;
     return false;
 }
-/*
 
-void AdaptiveNetworkManager::setWeight(cTopology::Node *srcNode, cTopology::Node *destNode, double weight) {
 
-    for(int j = 0; j<srcNode->getNumOutLinks(); j++) {
-               cTopology::LinkOut *l = srcNode->getLinkOut(j);
-
-             if(destNode->getModuleId() ==  l->getRemoteNode()->getModuleId()) {
-                   l->setWeight(weight);
-             }
-}
-}
-
- */
 
 void AdaptiveNetworkManager::updateWeight(cTopology::Node *srcNode, cTopology::Node *destNode) {
     std::map<int, double> *rDMatch = new std::map<int, double>();
@@ -539,6 +490,8 @@ void AdaptiveNetworkManager::setRiskLevel(cTopology::Node *srcNode, cTopology::N
 }
 
 
+
+
 void AdaptiveNetworkManager:: updateChannelDelay(cTopology::Node *srcNode, cTopology::Node *destNode) {
     std::map<int, double> *rDMatch = new std::map<int, double>();
     readAllRiskDelayFactorMatching(rDMatch, par("riskDelIncrFactFile").stringValue());
@@ -575,7 +528,9 @@ void AdaptiveNetworkManager::setChannelDelay(cTopology::Node *srcNode, cTopology
 }
  */
 
-
+/**
+ * Setta i pesi relativi a tutti i link della rete
+ */
 void AdaptiveNetworkManager::setAllWeight() {
     //EV<<"SETTING WEIGHT"<<endl;
     std::map<int, double> *rDMatch = new std::map<int, double>();
@@ -613,7 +568,7 @@ void AdaptiveNetworkManager::setAllWeight() {
     }
 }
 
-//void  AdaptiveNetworkManager::setRiskLevel()
+
 
 
 int AdaptiveNetworkManager::getMaxRisk() {
@@ -635,38 +590,6 @@ int AdaptiveNetworkManager::getMaxRisk() {
 
 }
 
-
-
-
-
-
-/*
-void AdaptiveNetworkManager::setMaxRiskAndWeight(cTopology::Node *src, cTopology::Node *dest) {
-
-
-    std::map<int, double> *rDMatch = new std::map<int, double>();
-    readAllRiskDelayFactorMatching(rDMatch, par("riskDelIncrFactFile").stringValue());
-
-
-        for(int i = 0; i<src->getNumOutLinks(); i++) {
-            cTopology::LinkOut *l = src->getLinkOut(i);
-            if(l->getRemoteNode()->getModuleId() == dest->getModuleId()) {
-             double maxRisk = getMaxRisk();
-             EV<<"MAX_RISK"<<maxRisk<<endl;
-             int riskLevel = l->getLocalGate()->getTransmissionChannel()->par("riskLevel").doubleValue();
-             if(riskLevel < maxRisk) {
-              l->getLocalGate()->getTransmissionChannel()->par("riskLevel").setDoubleValue(maxRisk);
-              l->getLocalGate()->getTransmissionChannel()->par("delay").setDoubleValue(MAX_DELAY);
-            //  l->setWeight(maxRisk*MAX_DELAY);
-              cDisplayString &s  = l->getLocalGate()->getTransmissionChannel()->getDisplayString();
-                       s.parse("ls=white");
-              //      EV<<"Weight of channel "<<src->getModuleId()<<"-->"<<l->getRemoteNode()->getModuleId()<<" has updated to "<<l->getWeight()<<endl;
-             }
-
-            }
-        }
-    }
- */
 
 
 
@@ -695,7 +618,7 @@ bool AdaptiveNetworkManager::isValidDestinationAddress(int requestTypeId,int des
     }
 
 
-
+    delete nRMatch;
     return reqVal && nodeVal;
 
 }
@@ -715,11 +638,12 @@ bool AdaptiveNetworkManager::isValidDestinationAddress(int destAddr) {
 
 
 
+
 void AdaptiveNetworkManager::setDropOffNodes() {
     std::map<int, std::string> *nodeTypes(new std::map<int, std::string>());
     readAllNodeTypes(nodeTypes, par("nodeTypesFile").stringValue());
     //EV<<"Nodes readed: "<<nodeTypes->size()<<endl;
-
+    int dist = par("dropOffNodeDist").doubleValue();
     std::vector<std::pair<int,int>> coords(0);
     //EV <<"Node vector size "<<coords.size()<<endl;
     // std::vector<std::pair<int,int>>::iterator it;
@@ -737,6 +661,13 @@ void AdaptiveNetworkManager::setDropOffNodes() {
     int i = 0;
     for(auto &c:coords) {
         //  EV<< "X "<<"Y "<<c.first<<" "<<c.second<<endl;
+        int rowT = c.first;
+        int colT = c.second;
+  /*      EV<<"RowT"<<rowT<<" ColT"<<colT<<endl;
+        EV<<"Dist"<<dist<<endl;
+        EV<<"rowT mod dist "<<rowT % dist<<endl;
+        EV<<"colT mod dist "<<colT % dist<<endl;*/
+
         cModule *node = getNodeFromCoords(c.first, c.second);
         // EV<<"Destination Node x"<<node->par("x").longValue()<<" y "<<node->par("y").longValue()<<endl;
         if (i ==  0) {
@@ -755,17 +686,21 @@ void AdaptiveNetworkManager::setDropOffNodes() {
         else {
             for(std::map<int, std::string>::iterator it = nodeTypes->begin(); it!= nodeTypes->end(); it++) {
                 //    EV<<"TypeName "<<(*it).second<<endl;
+                if(node->getIndex() % dist == 0 ) {
                 if((*it).second.compare("FirstAid")==0) {
                     cPar &typeId =  node->par("typeId");
                     cPar &type =  node->par("type");
-                    cPar &reqGen = node->par("isRequestGenerator");
                     typeId.setLongValue((*it).first);
                     type.setStringValue((*it).second);
+                }
+                }
+                    cPar &reqGen = node->par("isRequestGenerator");
+
                     reqGen.setBoolValue(false);
 
                     //    EV<<"Destination Node x"<<node->par("x").longValue()<<" y "<<node->par("y").longValue()<<": Type"<<type.stdstringValue()<<endl;
                 }
-            }
+
         }
         i++;
     }
@@ -776,6 +711,52 @@ void AdaptiveNetworkManager::setDropOffNodes() {
 
 
 
+void  AdaptiveNetworkManager::setRedZone() {
+    int riskZoneExp = this->getParentModule()->par("riskZoneExp").doubleValue();
+    std::vector<std::pair<int,int> > *coords = getCenteredSquare(riskZoneExp);
+
+    std::vector<cTopology::Node *> nodes;
+    for(const auto &x : (*coords)) {
+        cModule *n = getNodeFromCoords(x.first, x.second);
+        nodes.push_back(getNodeByID(n->getId()));
+    }
+
+     for(int i = 0; i<nodes.size(); i++) {
+
+        cTopology::Node *n = nodes[i];
+
+
+
+        for(int j = 0; j<n->getNumOutLinks(); j++) {
+               cTopology::LinkOut* srcLinkOut = n->getLinkOut(j);
+
+               for(int k = 0; k<nodes.size(); k++) {
+                   cTopology::Node *nT = nodes[k];
+
+                   if(srcLinkOut->getRemoteNode()->getModuleId() ==  nT->getModuleId() && nT->getModuleId() != n->getModuleId() ) {
+                  cDisplayString &s  = srcLinkOut->getLocalGate()->getTransmissionChannel()->getDisplayString();
+                  s.parse("ls=red");
+
+                   cPar &riskLevel = srcLinkOut->getLocalGate()->getTransmissionChannel()->par("riskLevel");
+                   riskLevel.setDoubleValue(1.0);
+
+                   EV<<"Risk Level increased to "<<riskLevel.doubleValue()<< "for connection"<< n->getModule()->getFullName()<<"-->"<<nT->getModule()->getFullName()<<endl;
+
+               }
+
+           }
+
+        }
+     }
+}
+
+
+
+
+
+/**
+ * Ritorna i nodi di drop-off di una certa tipologia.
+ */
 
 std::vector<cModule *>  AdaptiveNetworkManager::getAllDestinationNodes(int nodeTypeId) {
 
@@ -796,6 +777,9 @@ std::vector<cModule *>  AdaptiveNetworkManager::getAllDestinationNodes(int nodeT
 }
 
 
+/**
+ * Ritorna i nodi di drop-off
+ */
 
 std::vector<cModule *>  AdaptiveNetworkManager::getAllDestinationNodes() {
     std::map<int, std::string> *nodeTypes = new std::map<int, std::string>();
@@ -812,12 +796,22 @@ std::vector<cModule *>  AdaptiveNetworkManager::getAllDestinationNodes() {
 
         }
     }
+
+    delete nodeTypes;
     return destNodes;
 }
 
 
 
-void AdaptiveNetworkManager::checkAndSetMaxRiskAndWeight(cTopology::Node *srcNode, cTopology::Node *destNode) {
+
+/*
+ * Emula la rottura di un canale previa verifica di fattibilità valutando se risulta ancora
+ * possibile, dopo la rottura, raggungere l'esterno della zona rossa verificando se da un nodo esterno è ancora possibile
+ * raggiungere il nodo destinazione e che dal nodo sorgente è ancora possibile raggiungere lo stesso nodo esterno.
+ *
+ */
+
+bool AdaptiveNetworkManager::checkAndSetMaxRiskAndWeight(cTopology::Node *srcNode, cTopology::Node *destNode) {
 
 
     //std::vector<cModule *> destNodes =  getAllDestinationNodes();
@@ -826,6 +820,8 @@ void AdaptiveNetworkManager::checkAndSetMaxRiskAndWeight(cTopology::Node *srcNod
     int maxRisk = getMaxRisk();
     double weight;
     double riskLevel;
+    bool isGoodP = true;
+
     for(int j = 0; j<srcNode->getNumOutLinks(); j++) {
         cTopology::LinkOut *l = srcNode->getLinkOut(j);
         if(l->getRemoteNode()->getModuleId() == destNode->getModuleId()) {
@@ -836,14 +832,31 @@ void AdaptiveNetworkManager::checkAndSetMaxRiskAndWeight(cTopology::Node *srcNod
     setRiskLevel(srcNode, destNode, maxRisk);
     updateChannelDelay(srcNode, destNode);
     updateWeight(srcNode, destNode);
-    //  setWeight(destNode, srcNode, maxRisk*MAX_DELAY);
-    bool isGoodP = true;
+
+
     std::vector<cModule *> destNodes = getAllDestinationNodes();
 
+/*
     for(int i = 0; i<destNodes.size(); i++) {
 
-        calculatePath(srcNode->getModule()->par("address"), destNodes[i]->par("address"));
-        cTopology::LinkOut *linkOut = srcNode->getPath(0);
+
+        isGoodP = checkForGoodPath(destNodes[i]->par("address"), destNode->getModule()->par("address"));
+        isGoodP = checkForGoodPath(srcNode->getModule()->par("address"), destNodes[i]->par("address"));
+        if(isGoodP)
+            break;
+    }
+
+    if(isGoodP)
+        return isGoodP;
+*/
+    cModule *dNode = destNodes[0];
+
+
+       cTopology::LinkOut *linkOut;
+   // for(int i = 0; i<destNodes.size(); i++) {
+        int idNode = indexTable[dNode->par("address")];
+        calculatePath(dNode->par("address"),destNode->getModule()->par("address"));
+        linkOut = topo->getNode(idNode)->getPath(0);
         while(linkOut!= NULL) {
             if(linkOut->getWeight()  == maxRisk*MAX_DELAY) {
                 isGoodP = false;
@@ -851,22 +864,21 @@ void AdaptiveNetworkManager::checkAndSetMaxRiskAndWeight(cTopology::Node *srcNod
             }
             linkOut = linkOut->getRemoteNode()->getPath(0);
         }
-    }
+   // }
 
 
+        // verifica se il nodo sorgente non deve necesariamente passare da quel link per raggiungere l'esterno della zona rossa
 
-    for(int i = 0; i<destNodes.size(); i++) {
-        int idNode = indexTable[destNodes[i]->par("address")];
-        calculatePath(destNodes[i]->par("address"),destNode->getModule()->par("address"));
-        cTopology::LinkOut *linkOut = topo->getNode(idNode)->getPath(0);
-        while(linkOut!= NULL) {
-            if(linkOut->getWeight()  == maxRisk*MAX_DELAY) {
-                isGoodP = false;
-                break;
-            }
-            linkOut = linkOut->getRemoteNode()->getPath(0);
-        }
-    }
+              calculatePath(srcNode->getModule()->par("address"),dNode->par("address"));
+              linkOut = srcNode->getPath(0);
+              while(linkOut!= NULL) {
+                  if(linkOut->getWeight()  == maxRisk*MAX_DELAY) {
+                      isGoodP = false;
+                      break;
+                  }
+                  linkOut = linkOut->getRemoteNode()->getPath(0);
+              }
+
 
 
 
@@ -878,9 +890,15 @@ void AdaptiveNetworkManager::checkAndSetMaxRiskAndWeight(cTopology::Node *srcNod
 
         //setWeight(destNode, srcNode, weight);
     }
-
+return isGoodP;
 
 }
+
+
+
+
+
+
 
 
 
@@ -888,35 +906,56 @@ void AdaptiveNetworkManager::checkAndSetMaxRiskAndWeight(cTopology::Node *srcNod
 
 void AdaptiveNetworkManager::handleMessage(cMessage *msg)
 {
-    double maxRiskChann = getParentModule()->par("maxRiskChannelsPerc");
-    // TODO - Generated method body
+   // int seed = intuniform(0, 3, 2);
+    double maxRiskChann = getParentModule()->par("maxNumDroppedChannels");
+    double dropChRate = getParentModule()->par("dropChRate");
+
     EV << "Scheduling new message  : "<< endl;
     if (!msg->isSelfMessage())
         error("This module does not process messages.");
-    //   EV << " update message id  : "<< updateConnectionsMessage->getId() << endl;
-    //   const char* name = msg->getName();
     if(msg == updateWeightMessage) {
         EV << "UpdateConnectionsMessage arrived  : "<< endl;
-        if(MAX_TRY <= maxRiskChann) {
-            std::pair<cTopology::Node*, cTopology::Node*> nodes = getCenteredSquareRndLinkedNodes();
-            // if(isMaxRiskNode(nodes.first)) {
-            //  setMaxRiskAndWeight(nodes.first, nodes.second);
-            //   EV<<"SECOND NODE"<<nodes.second->getModuleId()<<"FIRST NODE "<<nodes.first->getModule()<<endl;
-            //  if(nodes.second != NULL)
-            // setMaxRiskAndWeight(nodes.second, nodes.first);
-            checkAndSetMaxRiskAndWeight(nodes.first, nodes.second);
-            checkAndSetMaxRiskAndWeight(nodes.second, nodes.first);
-        }
-        //   updateAllTables();
-        MAX_TRY++;
+    //    int sed = intuniform(0, 3, 2);    //perchè messo qui da errore???
+     //  if(MAX_TRY < maxRiskChann) {
+            std::pair<int, int> nodes = getCenteredSquareRndLinkedNodes(3);
+            if(nodes.second != -1)  {
+            cTopology::Node * sNode= topo->getNode(indexTable[nodes.first]);
+            cTopology::Node * dNode= topo->getNode(indexTable[nodes.second]);
+            bool cm = checkAndSetMaxRiskAndWeight(sNode, dNode);
+         //   if(cm)
+          //  updateTables(nodes.second);
+            bool cm2 =checkAndSetMaxRiskAndWeight(dNode, sNode);
+         //   if(cm || cm2)
+         //   updateAllTables();
+           // MAX_TRY++;
+            }
+            scheduleAt(simTime()+dropChRate, updateWeightMessage);
+     //   }
+
+
+
     }
 
 
 
 
-    //   scheduleAt(simTime()+1000, updateWeightMessage);
-
 }
+
+
+
+
+cTopology::Node* AdaptiveNetworkManager::getNodeByID(int idx) {
+
+       for(int i=0; i<topo->getNumNodes(); i++) {
+           cTopology::Node* n = topo->getNode(i);
+         //  EV << "Node idx" << i <<endl;
+           if(n->getModuleId() == idx)
+               return n;
+       }
+       return NULL;
+
+   }
+
 
 
 cModule *AdaptiveNetworkManager::getNodeFromCoords(int x, int y) {
@@ -934,48 +973,102 @@ cModule *AdaptiveNetworkManager::getNodeFromCoords(int x, int y) {
 
 }
 
+/**
+ * Identifica i nodi di pick-up
+ */
 
-std::pair< cTopology::Node*, cTopology::Node*> AdaptiveNetworkManager::getCenteredSquareRndLinkedNodes() {
+void AdaptiveNetworkManager::setPickUpNodes() {
     int riskZoneExp = this->getParentModule()->par("riskZoneExp").doubleValue();
     std::vector<std::pair<int,int> > *coords = getCenteredSquare(riskZoneExp);
-    std::vector<cTopology::Node *> nodes(0);
     for(const auto &x : (*coords)) {
-        //   EV<<"COORDS "<<x.first<<" "<<x.second;
-        cModule *node = getNodeFromCoords(x.first, x.second);
-        for(int i = 0; i<topo->getNumNodes(); i++) {
-            cTopology::Node *tNode = topo->getNode(i);
-            if(node->getId() == tNode->getModuleId()) {
-                nodes.push_back(tNode);
-            }
-        }
-    }
-    int indexNode = intuniform(0, nodes.size()-1,3);
-    cTopology::Node *sNode = nodes[indexNode];
-    int indexLink;
-    cTopology::LinkOut* sLinkOut;
-    cTopology::Node *dNode;
-
-    indexLink = intuniform(0, sNode->getNumOutLinks()-1,3);
-    sLinkOut = sNode->getLinkOut(indexLink);
-    while(sLinkOut->getRemoteNode()->getModuleId() != dNode->getModuleId()) {
-        indexLink = intuniform(0, sNode->getNumOutLinks()-1,3);
-        sLinkOut = sNode->getLinkOut(indexLink);
-
-        for(int k = 0; k<nodes.size(); k++) {
-            cTopology::Node *nT = nodes[k];
-            if(sLinkOut->getRemoteNode()->getModuleId() == nT->getModuleId()) {
-                dNode = nT;
-
-                // return std::make_pair(sNode, dNode);
-            }
-        }
-
+           //   EV<<"COORDS "<<x.first<<" "<<x.second;
+           cModule *node = getNodeFromCoords(x.first, x.second);
+           node->par("typeId").setDoubleValue(0);
+           node->par("type").setStringValue("PickUp");
+           node->par("isRequestGenerator").setBoolValue(true);
     }
 
-
-    return std::make_pair(sNode, dNode);
 }
 
+
+
+
+/**
+ * Ritorna gli indirizzi di due nodi direttamente connessi all'interno della zona rossa
+ * presi in modo casuale
+ */
+
+    std::pair<int, int> AdaptiveNetworkManager::getCenteredSquareRndLinkedNodes(int seed) {
+          int riskZoneExp = this->getParentModule()->par("riskZoneExp").doubleValue();
+        //  int maxRisk = getMaxRisk();
+          std::vector<std::pair<int,int> > *coords = getCenteredSquare(riskZoneExp);
+          std::vector<cTopology::Node *> nodes(0);
+          for(const auto &x : (*coords)) {
+              //   EV<<"COORDS "<<x.first<<" "<<x.second;
+              cModule *node = getNodeFromCoords(x.first, x.second);
+              for(int i = 0; i<topo->getNumNodes(); i++) {
+                  cTopology::Node *tNode = topo->getNode(i);
+                  if(node->getId() == tNode->getModuleId()) {
+                      nodes.push_back(tNode);
+                  }
+              }
+          }
+          int indexNode = intuniform(0, nodes.size()-1,seed);
+          cTopology::Node *sNode = nodes[indexNode];
+          int indexLink;
+          cTopology::LinkOut* sLinkOut;
+          cTopology::Node *dNode;
+          int linkNum=0;
+
+         // indexLink = intuniform(0, sNode->getNumOutLinks()-1,seed);
+         // sLinkOut = sNode->getLinkOut(indexLink);
+          std::vector<int> sNodeOutLinks(0);
+          int numLinks = sNode->getNumOutLinks();
+
+          for(int i = 0; i<numLinks; i++) {
+              sNodeOutLinks.push_back(i);
+          }
+
+          std::random_shuffle(sNodeOutLinks.begin(), sNodeOutLinks.end());
+          for(int i = 0; i<numLinks; i++) {
+             // sLinkOut = sNode->getLinkOut(i);
+              sLinkOut = sNode->getLinkOut(sNodeOutLinks[i]);
+
+          int delay = sLinkOut->getLocalGate()->getTransmissionChannel()->par("delay").doubleValue();
+                    if(delay < MAX_DELAY) {
+                    for(int k = 0; k<nodes.size(); k++) {
+                        cTopology::Node *nT = nodes[k];
+                        if(sLinkOut->getRemoteNode()->getModuleId() == nT->getModuleId()) {
+
+
+                            dNode = nT;
+                            return std::make_pair(sNode->getModule()->par("address").doubleValue(), dNode->getModule()->par("address").doubleValue());
+                           // break;
+                            }
+                          //  dNode = nT;
+                        }
+
+                }
+          }
+
+
+
+
+
+                  return std::make_pair(-1,-1);
+
+            //  }
+
+         // }
+
+        // return std::make_pair(-1,-1);
+       // return std::make_pair(sNode->getModule()->par("address").doubleValue(), dNode->getModule()->par("address").doubleValue());
+      }
+
+
+/**
+ * Ritorna la lista degli indirizzi dei nodi presenti nella zona rossa.
+ */
 
 std::vector<std::pair<int,int>> *AdaptiveNetworkManager::getCenteredSquare(int mult) {
     std::vector<std::pair<int,int>> *coords;
@@ -1021,14 +1114,13 @@ std::vector<std::pair<int,int>> *AdaptiveNetworkManager::getCenteredSquare(int m
 }
 
 
-
-
-
-
+/**
+ * Ritorna l'indirizzo di destinazione più vicino in base a l'indirizzo sorgente e al tipo
+ * della richiesta
+ */
 
 int AdaptiveNetworkManager::getCloserValidDestinationAddress(int srcAddress, int requestTypeId) {
 
-    //  updateAllTables();
     std::map<int, int> *nRMatch(new std::map<int, int>());
     readAlldestNodesRequestsMatching(nRMatch, par("destNodesRequestMatchingFile").stringValue() );
     int nodeTypeId;
@@ -1069,7 +1161,7 @@ int AdaptiveNetworkManager::getCloserValidDestinationAddress(int srcAddress, int
     //  EV<<"ADRRRRRRRr"<<n->getId()<<endl;
     return nodeCloser->par("address").doubleValue();
 
-    //   return 1;
+
 
 }
 

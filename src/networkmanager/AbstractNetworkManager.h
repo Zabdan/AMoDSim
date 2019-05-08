@@ -54,6 +54,8 @@ protected:
     inline double getAdditionalTravelTime(){return additionalTravelTime;} //Get the additional travel time due to acceleration and deceleration
 
 
+   // virtual int getMaxRisk();
+
 
     // velocita non sepre uguale quindi va calcolata prima la velocita media
     double setAdditionalTravelTime(double speed, double acceleration) //Evaluate Additional Travel Time due to acceleration and deceleration

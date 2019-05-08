@@ -68,9 +68,12 @@ double ManhattanNetworkManager::getSpaceDistance(int srcAddr, int dstAddr)
 }
 
 
+/*
+int ManhattanNetworkManager::getMaxRisk() {
 
-
-
+    return -1;
+}
+*/
 
 
 /**

@@ -24,7 +24,21 @@ void BaseCoord::initialize()
 
     traveledDistance = registerSignal("traveledDistance");
     waitingTime = registerSignal("waitingTime");
+
+    waitingTimeForYellowCodes = registerSignal("waitingTimeForYellowCodes");
+    waitingTimeForRedCodes = registerSignal("waitingTimeForRedCodes");
+
     actualTripTime = registerSignal("actualTripTime");
+
+    actualTripTimeForYellowCodes = registerSignal("actualTripTimeForYellowCodes");
+    actualTripTimeForRedCodes = registerSignal("actualTripTimeForRedCodes");
+
+    outOfTimeForYellowCodes = registerSignal("outOfTimeForYellowCodes");
+    outOfTimeForRedCodes = registerSignal("outOfTimeForRedCodes");
+    outOfTimeForGreenCodes = registerSignal("outOfTimeForGreenCodes");
+
+
+
     stretch = registerSignal("stretch");
     tripDistance = registerSignal("tripDistance");
     passengersOnBoard = registerSignal("passengersOnBoard");
@@ -56,14 +70,8 @@ void BaseCoord::initialize()
     simulation.getSystemModule()->subscribe("tripRequest",this);
 }
 
-/**
- * Assign the new trip request to the vehicle which minimize the pickup waiting time.
- *
- * @param vehicleProposal The vehicles proposals
- * @param tr The new TripRequest
- *
- * @return The ID of the vehicle which will serve the request or -1 otherwise.
- */
+
+
 int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest *tr)
 {
     double pickupDeadline = tr->getPickupSP()->getTime() + tr->getPickupSP()->getMaxDelay();
@@ -72,10 +80,6 @@ int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*
     double dropoffActualTime = -1.0;
     int vehicleID = -1;
 
-    //The request has been evaluated
-   /* TripRequest *preq = pendingRequests[tr->getID()];
-    pendingRequests.erase(tr->getID());
-    delete preq;*/
 
 
     for(auto const &x : vehicleProposal)
@@ -102,11 +106,36 @@ int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*
 
       if(pickupActualTime > -1)
       {
-          EV << "Accepted request of vehicle "<< vehicleID << " for request: " << tr->getID() << " .Actual PICKUP time: " << pickupActualTime
-             << "/Requested Pickup Deadline: " << pickupDeadline << endl;
+
+              //  EV << "Accepted request of vehicle " << vehicleID << " for request: "
+             //              << tr->getID() << " .The time cost is: " << additionalCost << endl;
+                 EV<<"Vehicle "<<vehicleID<<"  SP List: ";
+                 std::list<StopPoint *> spList = vehicleProposal[vehicleID]->getSpList();
+                 for(std::list<StopPoint*>::const_iterator it = spList.begin(); it != spList.end(); it++) {
+                     int idTR = pendingRequests[(*it)->getRequestID()]->getTypeID();
+                     EV<<idTR<<" ";
+
+                 }
+
+
+
+
+
+
+          EV << "Accepted request of vehicle "<< vehicleID << " for request: " << tr->getID() << " .Actual PICKUP time: " << pickupActualTime<<endl;
+        //     << "/Requested Pickup Deadline: " << pickupDeadline << endl;
              //" .Actual DROPOFF time: " << dropoffActualTime << "/Requested DropOFF Deadline: " << dropoffDeadline << endl;
 
+
+
           updateVehicleStopPoints(vehicleID, vehicleProposal[vehicleID]->getSpList(), getRequestPickup(vehicleProposal[vehicleID]->getSpList(),tr->getID()));
+
+
+
+          for(auto const &el:rPerVehicle) {
+              printOverDelayTimeSum(tr->getTypeID(), el.first);
+          }
+
       }
       else
       {
@@ -119,6 +148,10 @@ int BaseCoord::minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*
 
       return vehicleID;
 }
+
+
+
+
 
 /**
  * Assign the new trip request to the vehicle which minimize the additional time cost.
@@ -136,43 +169,14 @@ int BaseCoord::minCostAssignment(std::map<int, StopPointOrderingProposal*> vehic
     double additionalCost = -1.0;
     int vehicleID = -1;
 
-    //The request has been evaluated
-  /*  TripRequest *preq = pendingRequests[tr->getID()];
-    pendingRequests.erase(tr->getID());
-    delete preq;*/
 
-    if(simTime().dbl()> 17700 && tr->getPickupSP()->getLocation() == 15) {
-
-
-
-    for (auto const &x : vehicleProposal) {
-        double curAdditionalCost = x.second->getAdditionalCost();
-    //    if (x.second->getActualPickupTime() <= pickupDeadline) {
-            if (additionalCost == -1.0 || curAdditionalCost < additionalCost) {
-                if (vehicleID != -1) //The current proposal is better than the previous one
-                   delete (vehicleProposal[vehicleID]);
-
-                vehicleID = x.first;
-                additionalCost = curAdditionalCost;
-            }
-           else {
-
-            //   if(tr->getPickupSP()->getLocation() == 15)
-               delete x.second; //Reject the current proposal (A better one has been accepted)
-
-           }
-       // } else
-       //     delete x.second; //Reject the current proposal: it does not respect the time constraints
-    }
-
-   // return -1;
-}
-
-
-    else {
 
     for (auto const &x : vehicleProposal) {
            double curAdditionalCost = x.second->getAdditionalCost();
+
+
+
+           EV<<"Add cost of vehicle "<<x.first<<" is "<<curAdditionalCost<<endl;
        //    if (x.second->getActualPickupTime() <= pickupDeadline) {
                if (additionalCost == -1.0 || curAdditionalCost < additionalCost) {
               //     if (vehicleID != -1) //The current proposal is better than the previous one
@@ -184,12 +188,12 @@ int BaseCoord::minCostAssignment(std::map<int, StopPointOrderingProposal*> vehic
               else {
 
                //   if(tr->getPickupSP()->getLocation() == 15)
-               //   delete x.second; //Reject the current proposal (A better one has been accepted)
+                  delete x.second; //Reject the current proposal (A better one has been accepted)
 
               }
           // } else
           //     delete x.second; //Reject the current proposal: it does not respect the time constraints
-       }
+    //   }
 
 
     }
@@ -225,6 +229,7 @@ int BaseCoord::minCostAssignment(std::map<int, StopPointOrderingProposal*> vehic
 
 
 }
+
 
 
 /**
@@ -440,171 +445,27 @@ int BaseCoord::countOnBoardRequests(int vehicleID)
 }
 
 
-TripRequest * BaseCoord::updateRequestPriority(std::list<StopPoint *> spList) {
+void BaseCoord::printOverDelayTimeSum(int typeID, int vehicleID) {
+    std::list<StopPoint*> requests = rPerVehicle[vehicleID];
+   // int num;
+    std::vector<double> time(0);
 
-    double actualTime = simTime().dbl();
-    double updateTime = par("updateRequestPriorityTime").doubleValue();
-    int minListSizeForPriorityUpdate = par("minListSizeForPriorityUpdate").doubleValue();
-    if(spList.size() >= minListSizeForPriorityUpdate) {
-    int priority = getMinPriority(spList);
-    if(priority < getMaxRequestPriority()) {
-    double oldestTime = getOldestTime(spList, priority);
-    EV<<"OLDEST TIME: "<<oldestTime<<endl;
-    if(oldestTime > 0  && (actualTime - oldestTime)> updateTime ) {
-        EV<<"Updating Request Priority!......."<<endl;
-    TripRequest *tr = getOldestPendingRequest(priority, oldestTime);
-    //TripRequest *updatedRequest = new TripRequest(*tr);
-
-    tr->setTypeID(priority+1);
-    tr->setType("jkkk");
-    return tr;
-    }
-   // double requestTime = tr->getPickupSP()->getActualTime();
-
-    }
-    }
-
-    return NULL;
-
-}
-
-
-TripRequest *BaseCoord::getOldestPendingRequest(int priority, double oldestTime) {
-
-   TripRequest *tr;
-    for(std::map<int, TripRequest*>::iterator it = pendingRequests.begin(); it != pendingRequests.end(); it++) {
-        if(priority == it->second->getTypeID()) {
-            StopPoint *p = it->second->getPickupSP();
-            if(p->getTime() == oldestTime) {
-                tr = it->second;
-            }
-
+    for(std::list<StopPoint *>::const_iterator it=requests.begin(); it!=requests.end(); it++) {
+        StopPoint *sp = (*it);
+        int tmpTypeID = pendingRequests[sp->getRequestID()]->getTypeID();
+        if(tmpTypeID == typeID && sp->getIsPickup()) {
+           double t = sp->getActualTime()-sp->getTime()-sp->getMaxDelay();
+           //num++;
+           time.push_back(t);
         }
 
     }
 
-    return tr;
+    EV<<"Vehicle ID "<<vehicleID<<" has "<<time.size()<< " pending requests of type"<<typeID<<endl;
+    EV<<"Vehicle ID "<<vehicleID<<" has "<<std::accumulate(time.begin(), time.end(),0.0)<< "  of over delay time sum  for pending requests of type"<<typeID<<endl;
+
 
 }
-
-
-
-int BaseCoord::getMinPriority(std::list<StopPoint *> spList) {
-    int priority = 0;
-    StopPoint * sp = spList.back();
-    priority = pendingRequests[sp->getRequestID()]->getTypeID();
-    return priority;
-
-}
-
-
-
-double BaseCoord::getOldestTime(std::list<StopPoint *> spList, int priority) {
-    double time = 0;
-    int i = 0;
-    for(std::list<StopPoint*>::const_iterator it = std::prev(spList.end()); it != std::prev(spList.begin()); it--) {
-           StopPoint *tmp =  *it;
-           int tmpP = pendingRequests[tmp->getRequestID()]->getTypeID();
-           double tmpTime = tmp->getTime();
-         //  EV<<"ACT TIME"<<tmpTime<<endl;
-           if(tmpP == priority && tmp->getIsPickup()) {
-               if (i == 0) {
-                   time = tmpTime;
-               }
-               else {
-                   if(time > tmpTime) {
-                       time = tmpTime;
-                   }
-               }
-               i++;
-
-           }
-
-    }
-
-
-    return time;
-}
-
-
-int BaseCoord::deleteSPFromVehicleList(int vehicleID, int requestID) {
-    std::list<StopPoint *> spList = rPerVehicle[vehicleID];
-
-
-    for(std::list<StopPoint*>::const_iterator it = spList.begin(); it != spList.end(); it++) {
-              int idTR = pendingRequests[(*it)->getRequestID()]->getTypeID();
-              EV<<idTR<<" ";
-          }
-
-    int deleted = 0;
-       EV<<" DELETETING OLD SP  FROM Vehicle List "<<vehicleID<<" SP LIST"<<endl;
-       EV<<"NUM SP"<<spList.size()<<endl;
-       StopPoint *pickUp;
-       StopPoint *dropOff;
-       std::list<StopPoint*>::iterator it = spList.begin();
-       std::list<StopPoint*>::const_iterator it1;
-       std::list<StopPoint*>::const_iterator  it2;
-       while( it != spList.end()) {
-          StopPoint *tmp =  *it;
-          if(tmp->getRequestID() == requestID) {
-              if(tmp->getIsPickup()) {
-                  pickUp = tmp;
-                 // it1 = it;
-              }
-              else {
-                  dropOff = tmp;
-
-              }
-              spList.erase(it++);
-            // delete *it;
-            deleted++;
-          }
-          else
-              it++;
-       //   spList.erase(it1);
-        //  spList.erase(it2);
-}
-     //  spList.clear();
-
-
-
-
-    /*  for(auto &sp : spList) {
-          StopPoint *tmp =  sp;
-             if(sp->getRequestID() == requestID) {
-                 if(tmp->getIsPickup())
-                                  pickUp = tmp;
-                              else
-                                  dropOff = tmp;
-                              delete sp;
-                            deleted++;
-
-                             break;
-
-                         //    return -1;
-
-
-             }
-
-      }
-*/
-
-     // EV<<endl;
-                              EV<<"SP List after deleting "<<endl;
-                              EV<<"NUM SP"<<spList.size()<<endl;
-                             /*  for(std::list<StopPoint*>::const_iterator it = spList.begin(); it != spList.end(); it++) {
-                                         int idTR = pendingRequests[(*it)->getRequestID()]->getTypeID();
-                                         EV<<idTR<<" ";
-                                     }*/
-
-                                    return -1;
-
-       delete pickUp;
-     delete dropOff;
-
-
-           return deleted;
-      }
 
 
 
@@ -693,12 +554,7 @@ StopPoint* BaseCoord::getNextStopPoint(int vehicleID)
 */
 
 
-        // delete associated pendingRequest
-        if(!front->getIsPickup()) {
-        TripRequest *preq = pendingRequests[front->getRequestID()];
-         pendingRequests.erase(front->getRequestID());
-         delete preq;
-        }
+
 
 
         if (!rPerVehicle[vehicleID].empty())
@@ -766,10 +622,20 @@ StopPoint* BaseCoord::getCurrentStopPoint(int vehicleID)
             emit(waitingTime, tmp);
                 waitingTimeVector.push_back(tmp);
 
+            if(pendingRequests[r->getRequestID()]->getTypeID()==1)    {
+                emit(waitingTimeForYellowCodes, tmp);
+                               waitingTimeForYellowCodesVector.push_back(tmp);
+            }
+            else if(pendingRequests[r->getRequestID()]->getTypeID()==2)    {
+                emit(waitingTimeForRedCodes, tmp);
+                               waitingTimeForRedCodesVector.push_back(tmp);
+            }
+
 
         }
         else
         {
+            TripRequest *preq = pendingRequests[r->getRequestID()];
             double att = (simTime().dbl() - servedPickup[r->getRequestID()]->getActualTime()); //ActualTripTime
             double str = (netmanager->getTimeDistance(servedPickup[r->getRequestID()]->getLocation(), r->getLocation())) / att; //Trip Efficiency Ratio
             totalDroppedoffRequest++;
@@ -778,10 +644,64 @@ StopPoint* BaseCoord::getCurrentStopPoint(int vehicleID)
             double trip_distance = netmanager->getSpaceDistance(servedPickup[r->getRequestID()]->getLocation(), r->getLocation()) / 1000;
             emit(actualTripTime, (att/60));
                 actualTripTimeVector.push_back((att/60));
+
+            double ot = r->getActualTime() -r->getTime()-r->getMaxDelay();
+
+            if(preq->getTypeID()==0)    {
+            //    if(ot<0) {
+                    emit(outOfTimeForGreenCodes, (ot/60));
+                    outOfTimeForGreenCodesVector.push_back((ot/60));
+            //    }
+          /*      else {
+                    emit(outOfTimeForGreenCodes, 0);
+                    outOfTimeForGreenCodesVector.push_back(0);
+                }*/
+
+
+            }
+
+            if(preq->getTypeID()==1)    {
+                emit(actualTripTimeForYellowCodes, (att/60));
+                actualTripTimeForYellowCodesVector.push_back((att/60));
+                if(ot<0) {
+                            emit(outOfTimeForYellowCodes, (ot/60));
+                            outOfTimeForYellowCodesVector.push_back((ot/60));
+                        }
+                        else {
+                            emit(outOfTimeForYellowCodes, 0);
+                            outOfTimeForYellowCodesVector.push_back(0);
+                        }
+                }
+            else if(preq->getTypeID()==2)    {
+                emit(actualTripTimeForRedCodes, (att/60));
+                actualTripTimeForRedCodesVector.push_back((att/60));
+
+                if(ot<0) {
+                    emit(outOfTimeForRedCodes, (ot/60));
+                    outOfTimeForRedCodesVector.push_back((ot/60));
+                }
+                else {
+                    emit(outOfTimeForRedCodes, 0);
+                    outOfTimeForRedCodesVector.push_back(0);
+                }
+
+
+                }
+
+
             emit(stretch, str);
                 stretchVector.push_back(str);
             emit(tripDistance, trip_distance);
                 tripDistanceVector.push_back(trip_distance);
+
+
+
+                // delete associated pendingRequest
+
+
+          pendingRequests.erase(r->getRequestID());
+          delete preq;
+
         }
         return r;
     }
@@ -1057,27 +977,6 @@ bool BaseCoord::checkRequestVeichleTypesMatching(int requestTypeId, int veichleT
     return false;
 }
 
-
-int BaseCoord::getMaxRequestPriority() {
-    std::map<int, std::string> requestTypes = readAllRequestTypes();
-    int max = 0;
-    int i = 0;
-    for(auto const &x : requestTypes) {
-        if (i == 0) {
-            max = x.first;
-
-        }
-        else {
-            if(max < x.first) {
-                max = x.first;
-            }
-       }
-      i++;
-
-}
-
- return max;
-}
 
 
 std::map<int, std::string>   BaseCoord::readAllRequestTypes() {

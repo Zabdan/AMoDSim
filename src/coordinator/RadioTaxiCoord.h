@@ -24,6 +24,11 @@ protected:
         void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) override;
         void handleTripRequest(TripRequest *tr) override;
         StopPointOrderingProposal* eval_requestAssignment(int vehicleID, TripRequest* newTR) override;
+        StopPointOrderingProposal* addStopPointToFirstPos(int vehicleID, std::list<StopPoint*> spl, TripRequest* tr);
+        int getLastPos(int firstProb, std::list<StopPoint*> spList);
+        int getPrecProb(int prob, std::list<StopPoint*> spList);
+        int getNextProb(int prob, std::list<StopPoint*> spList);
+
 };
 
 #endif /* RADIOTAXICOORD_H_ */

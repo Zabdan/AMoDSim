@@ -46,6 +46,8 @@ class Vehicle: public Packet {
         virtual std::string getType() const;
         virtual int getTypeId() const;
 
+
+
 };
 
 #endif /* VEHICLE_H_ */

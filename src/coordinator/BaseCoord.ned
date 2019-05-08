@@ -21,9 +21,37 @@ simple BaseCoord like ICoord
         @signal[waitingTime](type="double");				//Pick-up waiting time per request
         @statistic[waitingTime](title="Waiting time (minute)";source="waitingTime";unit=minute;record=vector,stats;interpolationmode=none);
 
+        @signal[waitingTimeForYellowCodes](type="double");				//Pick-up waiting time per request
+        @statistic[waitingTimeForYellowCodes](title="Waiting time For Yellow Codes (minute)";source="waitingTimeForYellowCodes";unit=minute;record=vector,stats;interpolationmode=none);
+       
+        @signal[waitingTimeForRedCodes](type="double");				//Pick-up waiting time per request
+        @statistic[waitingTimeForRedCodes](title="Waiting time For Red Codes (minute)";source="waitingTimeForRedCodes";unit=minute;record=vector,stats;interpolationmode=none);
+        
+        
+
         @signal[actualTripTime](type="double");				//Actual time scored on vehicle (per request)
         @statistic[actualTripTime](title="Actual Trip Time (minute)";source="actualTripTime";unit=minute;record=vector,stats;interpolationmode=none);
 
+       
+        @signal[actualTripTimeForYellowCodes](type="double");				//Actual time scored on vehicle (per request)
+        @statistic[actualTripTimeForYellowCodes](title="Actual Trip Time For Yellow Codes (minute)";source="actualTripTimeForYellowCodes";unit=minute;record=vector,stats;interpolationmode=none);
+       
+         
+        @signal[actualTripTimeForRedCodes](type="double");				//Actual time scored on vehicle (per request)
+        @statistic[actualTripTimeForRedCodes](title="Actual Trip Time For Red Codes (minute)";source="actualTripTimeForRedCodes";unit=minute;record=vector,stats;interpolationmode=none); 
+       
+         
+        @signal[outOfTimeForYellowCodes](type="double");				//Actual time scored on vehicle (per request)
+        @statistic[outOfTimeForYellowCodes](title="Out of  Time For Yellow Codes (minute)";source="outOfTimeForYellowCodes";unit=minute;record=vector,stats;interpolationmode=none);  
+         
+        @signal[outOfTimeForRedCodes](type="double");				//Actual time scored on vehicle (per request)
+        @statistic[outOfTimeForRedCodes](title="Out of  Time For Red Codes (minute)";source="outOfTimeForRedCodes";unit=minute;record=vector,stats;interpolationmode=none);   
+         
+         
+        @signal[outOfTimeForGreenCodes](type="double");				//Actual time scored on vehicle (per request)
+        @statistic[outOfTimeForGreenCodes](title="Out of  Time For Green Codes (minute)";source="outOfTimeForGreenCodes";unit=minute;record=vector,stats;interpolationmode=none);    
+         
+       
         @signal[stretch](type="double");
         @statistic[stretch](title="Stretch";source="stretch";record=vector,stats;interpolationmode=none);
 

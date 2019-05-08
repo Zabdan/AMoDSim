@@ -41,6 +41,8 @@ class TripRequestSubmitter : public cSimpleModule
         // signals
         simsignal_t tripRequest;
 
+        int req_count;
+
       public:
         TripRequestSubmitter();
         virtual ~TripRequestSubmitter();
@@ -68,11 +70,8 @@ TripRequestSubmitter::~TripRequestSubmitter()
 void TripRequestSubmitter::initialize()
 {
     bool reqGen = getParentModule()->par("isRequestGenerator").boolValue();
-  /*  if(!reqGen) {
-        EV<<"TripRequest not generated for node x,y"<<getParentModule()->par("x").longValue()<<" "<<getParentModule()->par("y").longValue()<<endl;
-        return;
-    }*/
-    if(reqGen) {
+
+
     myAddress = par("address");
     destAddresses = par("destAddresses");
     minTripLength = par("minTripLength");
@@ -85,7 +84,7 @@ void TripRequestSubmitter::initialize()
 
     double rows = getParentModule()->getParentModule()->par("width");
     double columns = getParentModule()->getParentModule()->par("height");
-
+    req_count = 0;
 
 
 
@@ -94,18 +93,23 @@ void TripRequestSubmitter::initialize()
     generatePacket = new cMessage("nextPacket");
     tripRequest = registerSignal("tripRequest");
 
-    if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime)
-        scheduleAt(sendIATime->doubleValue(), generatePacket);
+    if(reqGen) {
+         EV<<"TripRequest not generated for node x,y"<<getParentModule()->par("x").longValue()<<" "<<getParentModule()->par("y").longValue()<<endl;
+         if (maxSubmissionTime < 0 || sendIATime->doubleValue() < maxSubmissionTime)
+                scheduleAt(sendIATime->doubleValue(), generatePacket);
+     }
+
   //  }
 
-}
+
 }
 
 
 void TripRequestSubmitter::handleMessage(cMessage *msg)
 {
+   // bool reqGen = getParentModule()->par("isRequestGenerator").boolValue();
     //EMIT a TRIP REQUEST
-
+   // if(reqGen) {
     if (msg == generatePacket)
     {
         TripRequest *tr = nullptr;
@@ -139,7 +143,9 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
             scheduleAt(nextTime, generatePacket);
         }
     }
+//}
 }
+
 
 /**
  * Build a new Trip Request
@@ -160,24 +166,38 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
     it = reqTypes.end();
     it--;
     int lastId = it->first;
-    int requestId = intuniform(firstId+1, lastId, 3);      // test type 1 end type 2
+   /* int requestId = intuniform(firstId, lastId, 3);      // test type 1 end type 2
     request->setTypeID(requestId);
-   request->setType(reqTypes[requestId]);
+   request->setType(reqTypes[requestId]);*/
+
+   if(req_count >=0 && req_count<3) {
+       request->setTypeID(lastId);
+       request->setType(reqTypes[lastId]);
+       req_count++;
+   }
+   else {
+       int requestId = intuniform(firstId, lastId-1, 3);      // test type 1 end type 2
+           request->setTypeID(requestId);
+          request->setType(reqTypes[requestId]);
+
+       req_count=0;
+
+   }
+
    // request->setTypeID(2);
   //  request->setType(reqTypes[2]);
 
 
 
-
    // TEST FOR COORDINATOR
-   if(myAddress == 15 ) {
+ /*  if(myAddress == 15 ) {
         request->setTypeID(2);
         request->setType(reqTypes[2]);
    }
    else {
        request->setTypeID(1);
        request->setType(reqTypes[1]);
-   }
+   }*/
 
 
 
@@ -197,6 +217,9 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
 
     return request;
 }
+
+
+
 
 
 
@@ -227,4 +250,8 @@ std::map<int, std::string>  TripRequestSubmitter::readAllRequestTypes() {
 }
        return requestTypes;
 }
+
+
+
+
 

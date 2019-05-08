@@ -77,59 +77,10 @@ void ManhattanRouting::handleMessage(cMessage *msg)
 
     EV <<"Pk dest address "<<pk->getDestAddr()<<"  destX"<<destX<< " destY"<<destY<<endl;
 
-       // cGate * g = netmanager->getGateToDestination(myAddress, pk->getDestAddr());
-
-
-
-
-   // else {
 
 
         int gIndex = netmanager->getOutputGate(myAddress, pk->getDestAddr());
         distance = netmanager->getChannelLength(myAddress,gIndex);
-/*
-    int startIndexToCheck = getParentModule()->getIndex();
-    EV<<"Staring Node x"<< myX<<" y "<<myY<<endl;
-
-    bool noAssignedGate = true;
-
-
-
-        if(myX < destX )
-           {
-              if(isMinRiskLevelRoute(2) || isAllEqualRiskLevelRoute()  || myY == destY) {
-
-               outGateIndex = 2; //right
-
-               distance = xChannelLength;
-               noAssignedGate = false;
-               }
-           }
-
-        else if(myX > destX )
-               {
-           if(isMinRiskLevelRoute(3) || isAllEqualRiskLevelRoute() || myY == destY) {
-                   outGateIndex = 3; //left
-                   distance = xChannelLength;
-                   noAssignedGate = false;
-            }
-               }
-
-             if(myY < destY && noAssignedGate)
-               {
-
-                   outGateIndex = 0; //sud
-                   distance = yChannelLength;
-
-               }
-               else if(myY > destY && noAssignedGate)
-               {
-                   outGateIndex = 1; //north
-                   distance = yChannelLength;
-
-               }
-
-*/
 
 
 
@@ -151,86 +102,4 @@ void ManhattanRouting::handleMessage(cMessage *msg)
 
 
 
-/*
 
-bool ManhattanRouting::isMinRiskLevelRoute(int outGateIndex) {
-   // double minRisk = -1;
-    std::vector<int> allMin;
-    int indexGate = -1;
-    int j = 0;
-    bool allEqual = true;
-    double minRisk = -1;
-    cModule *node = getParentModule();
-       for(cModule::GateIterator i(node); !i.end(); i++) {
-              cGate *gate = i();
-              if(gate->getType()==cGate::OUTPUT && gate->isConnected()) {
-                  EV<<"GATE NAME END "<<gate->getFullName()<< "INDEX "<<gate->getIndex()<<endl;
-                  cChannel *c = gate->getTransmissionChannel();
-
-                  double riskLevel = c->par("riskLevel").doubleValue();
-
-                  if(j == 0 || minRisk > riskLevel) {
-                      minRisk = riskLevel;
-                      indexGate =  gate->getIndex();
-                  }
-
-                  j++;
-              }
-       }
-       if(node->gate("port$o", outGateIndex)->getTransmissionChannel()->par("riskLevel").doubleValue() == minRisk)
-           return true;
-            return false;
-
-   }
-
-
-
-bool ManhattanRouting::isAllEqualRiskLevelRoute() {
-
-    int j = 0;
-    double risk = -1;
-    bool allEqual = true;
-    cModule *node = getParentModule();
-       for(cModule::GateIterator i(node); !i.end(); i++) {
-              cGate *gate = i();
-              if(gate->getType()==cGate::OUTPUT && gate->isConnected()) {
-
-                  cChannel *c = gate->getTransmissionChannel();
-                  double riskLevel = c->par("riskLevel").doubleValue();
-                  EV<< "RISK level "<< riskLevel<<endl;
-                  if(j == 0) {
-                      risk = riskLevel;
-                  }
-                  if(allEqual) {
-                      if(!(risk == riskLevel)) {
-                          allEqual = false;
-                          EV<< "NOT ALL Equal "<<endl;
-                      }
-                  }
-                  j++;
-              }
-       }
-
-    return allEqual;
-
-   }
-
-*/
-
-/*
-bool ManhattanRouting::isConnectedGate(int outGateIndex, int indexNode) {
-
-    cModule *node = getParentModule()->getParentModule()->getSubmodule("n", indexNode);
-    for(cModule::GateIterator i(node); !i.end(); i++) {
-           cGate *gate = i();
-           if(gate->getType()==cGate::OUTPUT && gate->isConnected() && gate->getIndex() == outGateIndex) {
-               EV <<"Gate founded!"<<endl;
-               return true;
-
-           }
-    }
-
-     return false;
-
-}
-*/

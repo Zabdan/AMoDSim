@@ -11,7 +11,7 @@
 ##    Andrea Di Maria                                 ##
 ##    <andrea.dimaria90@gmail.com>                    ##
 ########################################################
-*/
+ */
 
 #ifdef _MSC_VER
 #pragma warning(disable:4786)
@@ -33,7 +33,7 @@
  */
 class App : public cSimpleModule,cListener
 {
-  private:
+private:
     // configuration
     int myAddress;
     int numberOfVehicles;
@@ -48,11 +48,11 @@ class App : public cSimpleModule,cListener
     // signals
     simsignal_t newTripAssigned;
 
-  public:
+public:
     App();
     virtual ~App();
 
-  protected:
+protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual void receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID);
@@ -85,6 +85,7 @@ void App::initialize()
     additionalTravelTime = netmanager->getAdditionalTravelTime();
 
     newTripAssigned = registerSignal("newTripAssigned");
+    int veicCounter=0;
 
     EV << "I am node " << myAddress << endl;
 
@@ -93,6 +94,7 @@ void App::initialize()
     {
         for(int i=0; i<numberOfVehicles; i++)
         {
+              int val = intuniform(0,3,3);
             // Random generation of vehicle type
             std::map<int, std::string> vTypes = readAllVehicleTypes();
             std::map<int, std::string>::iterator it = vTypes.begin();
@@ -100,10 +102,23 @@ void App::initialize()
             it = vTypes.end();
             it--;
             int lastId = (*it).first;
-            int vTypeId = intuniform(firstId, lastId, 3);
             Vehicle *v = new Vehicle();
-            v->setTypeId(vTypeId);
-            v->setType(vTypes[vTypeId]);
+            if(val<3) {
+                v->setTypeId(lastId);
+                v->setType(vTypes[lastId]);
+                // veicCounter++;
+                      }
+            else {
+                v->setTypeId(firstId);
+                v->setType(vTypes[firstId]);
+               // veicCounter=0;
+
+            }
+
+          //  int vTypeId = intuniform(firstId, lastId, 3);
+
+           // v->setTypeId(vTypeId);
+          //  v->setType(vTypes[vTypeId]);
             v->setSeats(seatsPerVehicle);
             EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() <<"of type  "<<v->getType()<<  ". It has " << v->getSeats() << " seats." << endl;
             tcoord->registerVehicle(v, myAddress);
@@ -138,22 +153,11 @@ void App::handleMessage(cMessage *msg)
 
     EV << "received VEHICLE " << vehicle->getID() << " after " << vehicle->getHopCount() << " hops." << endl;
 
-/*
-    if(simTime().dbl() > 28500 ){
-                               EV<<"Pk stopped!"<<endl;
-                               return;
-              }*/
 
 
 
     StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
 
-/*
-     if(simTime().dbl() > 7900 && myAddress == 21){
-                            EV<<"Pk stopped!"<<endl;
-                            return;
-           }
-*/
 
 
 
@@ -168,18 +172,8 @@ void App::handleMessage(cMessage *msg)
 
 
 
-
-
     //Ask to coordinator for next stop point
     StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
-
-/*
-         if(simTime().dbl() > 7900 && myAddress == 21){
-                                EV<<"Pk stopped!"<<endl;
-                                return;
-               }
-*/
-
 
 
 
@@ -197,8 +191,6 @@ void App::handleMessage(cMessage *msg)
             delays=0;
 
 
-
-
         if(nextStopPoint->getLocation() == myAddress)
             sendDelayed(vehicle,delays,"out");
         else
@@ -213,8 +205,11 @@ void App::handleMessage(cMessage *msg)
         EV << "Vehicle " << vehicle->getID() << " is in node " << myAddress << endl;
         tcoord->registerVehicle(vehicle, myAddress);
 
-        if (ev.isGUI())
+
+        if (ev.isGUI()) {
             getParentModule()->getDisplayString().setTagArg("i",1,"green");
+            ///  getParentModule()->bubble("REQUEST COMPLETE!");
+        }
 
         if (!simulation.getSystemModule()->isSubscribed("newTripAssigned",this))
             simulation.getSystemModule()->subscribe("newTripAssigned",this);
@@ -233,47 +228,47 @@ void App::handleMessage(cMessage *msg)
 void App::receiveSignal(cComponent *source, simsignal_t signalID, double vehicleID){
 
 
-  /**
-   * The coordinator has accepted a trip proposal
-   */
-  if(signalID == newTripAssigned)
-  {
+    /**
+     * The coordinator has accepted a trip proposal
+     */
+    if(signalID == newTripAssigned)
+    {
 
-      if(tcoord->getLastVehicleLocation(vehicleID) == myAddress)
-      {
-          //The vehicle that should serve the request is in this node
-          Vehicle *veic = tcoord->getVehicleByID(vehicleID);
+        if(tcoord->getLastVehicleLocation(vehicleID) == myAddress)
+        {
+            //The vehicle that should serve the request is in this node
+            Vehicle *veic = tcoord->getVehicleByID(vehicleID);
 
-          if (veic != NULL)
-          {
-              double sendDelayTime = additionalTravelTime;
+            if (veic != NULL)
+            {
+                double sendDelayTime = additionalTravelTime;
 
-              StopPoint* sp =tcoord->getNewAssignedStopPoint(veic->getID());
-              EV << "The proposal of vehicle: " << veic->getID() << " has been accepted for requestID:  " << sp->getRequestID() << endl;
-              veic->setSrcAddr(myAddress);
-              veic->setDestAddr(sp->getLocation());
+                StopPoint* sp =tcoord->getNewAssignedStopPoint(veic->getID());
+                EV << "The proposal of vehicle: " << veic->getID() << " has been accepted for requestID:  " << sp->getRequestID() << endl;
+                veic->setSrcAddr(myAddress);
+                veic->setDestAddr(sp->getLocation());
 
-              //Time for boarding or dropoff
-              double delays = (sp->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, sp->getLocation());
-              if(delays < 0)
-                  delays = 0;
+                //Time for boarding or dropoff
+                double delays = (sp->getActualTime() - simTime().dbl()) - netmanager->getTimeDistance(myAddress, sp->getLocation());
+                if(delays < 0)
+                    delays = 0;
 
-              if(sp->getLocation() == myAddress)
-                  sendDelayTime = delays;
-              else
-                  sendDelayTime = sendDelayTime+delays;
+                if(sp->getLocation() == myAddress)
+                    sendDelayTime = delays;
+                else
+                    sendDelayTime = sendDelayTime+delays;
 
-              EV << "Sending Vehicle from: " << veic->getSrcAddr() << "to " << veic->getDestAddr() << endl;
-              Enter_Method("sendDelayed",veic,sendDelayTime,"out");
-              sendDelayed(veic,sendDelayTime,"out");
+                EV << "Sending Vehicle from: " << veic->getSrcAddr() << "to " << veic->getDestAddr() << endl;
+                Enter_Method("sendDelayed",veic,sendDelayTime,"out");
+                sendDelayed(veic,sendDelayTime,"out");
 
-              if (ev.isGUI())
-                getParentModule()->getDisplayString().setTagArg("i",1,"gold");
-              //if (simulation.getSystemModule()->isSubscribed("tripRequestCoord",this))
+                if (ev.isGUI())
+                    getParentModule()->getDisplayString().setTagArg("i",1,"gold");
+                //if (simulation.getSystemModule()->isSubscribed("tripRequestCoord",this))
                 //  simulation.getSystemModule()->unsubscribe("tripRequestCoord",this);
-          }
-      }
-  }
+            }
+        }
+    }
 
 }
 
@@ -285,22 +280,22 @@ std::map<int, std::string>  App::readAllVehicleTypes() {
     std::map<int, std::string> vehicleTypes;
     std::string line;
     std::fstream vehicleTypesFile(par("vehicleTypesFile").stringValue(), std::ios::in);
-       while(getline(vehicleTypesFile, line, '\n'))
-       {
-           if (line.empty() || line[0] == '#')
-               continue;
-           std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
-           if (tokens.size() != 2)
-               throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
+    while(getline(vehicleTypesFile, line, '\n'))
+    {
+        if (line.empty() || line[0] == '#')
+            continue;
+        std::vector<std::string> tokens = cStringTokenizer(line.c_str()).asVector();
+        if (tokens.size() != 2)
+            throw cRuntimeError("wrong line in module file: 2 items required, line: \"%s\"", line.c_str());
 
-           // get fields from tokens
-           int vehicleTypeId = atoi(tokens[0].c_str());
-           const char *vehicleType = tokens[1].c_str();
+        // get fields from tokens
+        int vehicleTypeId = atoi(tokens[0].c_str());
+        const char *vehicleType = tokens[1].c_str();
 
-           vehicleTypes.insert(std::pair<int, std::string>(vehicleTypeId, vehicleType));
+        vehicleTypes.insert(std::pair<int, std::string>(vehicleTypeId, vehicleType));
 
 
-}
-       return vehicleTypes;
+    }
+    return vehicleTypes;
 }
 

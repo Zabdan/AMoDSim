@@ -59,7 +59,7 @@ protected:
   //  virtual int getValidDestinationAddress(int requestTypeId) override;
     virtual int getCloserValidDestinationAddress(int srcAddress, int requestTypeId)override;
     virtual std::vector<std::pair<int,int>> *getCenteredSquare(int mult) override;
-
+   // virtual int getMaxRisk() override;
 
 };
 

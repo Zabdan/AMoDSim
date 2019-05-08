@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <numeric>
 
 class BaseCoord : public cSimpleModule, cListener{
 
@@ -52,9 +53,35 @@ private:
         //Statistical signals
         simsignal_t traveledDistance;
         simsignal_t waitingTime;
+
+        simsignal_t waitingTimeForYellowCodes;
+        simsignal_t waitingTimeForRedCodes;
+
         std::vector<double> waitingTimeVector;
+
+
+        std::vector<double> waitingTimeForYellowCodesVector;
+        std::vector<double> waitingTimeForRedCodesVector;
+
         simsignal_t actualTripTime;
+
+        simsignal_t actualTripTimeForYellowCodes;
+        simsignal_t actualTripTimeForRedCodes;
+
         std::vector<double> actualTripTimeVector;
+
+        std::vector<double> actualTripTimeForYellowCodesVector;
+        std::vector<double> actualTripTimeForRedCodesVector;
+
+        simsignal_t outOfTimeForYellowCodes;
+        simsignal_t outOfTimeForRedCodes;
+        simsignal_t outOfTimeForGreenCodes;
+
+
+        std::vector<double> outOfTimeForYellowCodesVector;
+        std::vector<double> outOfTimeForRedCodesVector;
+        std::vector<double> outOfTimeForGreenCodesVector;
+
         simsignal_t stretch;
         std::vector<double> stretchVector;
         simsignal_t tripDistance;
@@ -95,6 +122,7 @@ private:
         int minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the pickup waiting time
         int minCostAssignment(std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the cost
 
+
         StopPoint* getRequestPickup(std::list<StopPoint*> spList, int requestID);
         StopPoint* getRequestDropOff(std::list<StopPoint*> spList, int requestID);
         void cleanStopPointList(std::list<StopPoint*> spList);
@@ -103,17 +131,21 @@ private:
         virtual int getMaxVehiclesSeats();
         virtual void collectPercentileStats(std::string sigName, std::vector<double> values);
 
-
-        virtual TripRequest *updateRequestPriority(std::list<StopPoint *> spList);
-        virtual TripRequest *getOldestPendingRequest(int priority, double oldestTime);
-        virtual int getMinPriority(std::list<StopPoint *> spList);
+      // My functions-----
+     //   virtual TripRequest *updateRequestPriority(std::list<StopPoint *> spList);
+     //   virtual TripRequest *getOldestPendingRequest(int priority, double oldestTime);
+     /*   virtual int getMinPriority(std::list<StopPoint *> spList);
         virtual double getOldestTime(std::list<StopPoint *> spList, int priority);
         virtual int deleteSPFromVehicleList(int vehicleID, int requestID);
-        virtual int getMaxRequestPriority();
+        virtual int getMaxRequestPriority();*/
 
         virtual std::map<int,int> readAllRequestVeichleTypesMatching();
         virtual bool checkRequestVeichleTypesMatching(int requestTypeId, int veichleTypeId);
         virtual std::map<int, std::string> readAllRequestTypes();
+
+        virtual void printOverDelayTimeSum(int requestTypeID, int vehicleID);
+
+        //--------
 
     public:
         void printSPListInfo(int vehicleID);
@@ -122,7 +154,9 @@ private:
         void registerVehicle (Vehicle *v, int address);
         int getLastVehicleLocation(int vehicleID);
         Vehicle* getVehicleByID(int vehicleID);
+        //--modified--
         bool isRequestValid(const TripRequest tr);
+
         int countOnBoardRequests(int vehicleID);
         StopPoint* getNewAssignedStopPoint(int vehicleID);
         inline double getMinTripLength(){return minTripLength;}

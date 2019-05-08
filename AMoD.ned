@@ -2,7 +2,6 @@ import src.coordinator.ICoord;
 import src.node.Node;
 import src.networkmanager.INetworkManager;
 import ned.DatarateChannel;
-import src.networkmanager.NetworkModifier;
 
 network AMoD
 {
@@ -33,14 +32,19 @@ network AMoD
         //------NetworkManager type--------
         string netmanagerType = default ("ManhattanNetworkManager");
         
+        
          // Risk zone expansion factor
         double riskZoneExp = default(0);         
         
-        // Max delay 
-        double maxTravelTime @unit(s)=  80000s;
         
-        //
-       // double maxRiskChannelsPerc = 28; 
+        double maxChDelay @unit(s)=  80000s;
+        
+      
+        double maxNumDroppedChannels = default(10); 
+        
+        double dropChRate= default(1000);
+        
+        
         
          
         
@@ -65,8 +69,7 @@ network AMoD
 
     submodules:
         
-        netmodifier: NetworkModifier {
-        }
+ 
         
         netmanager: <netmanagerType> like INetworkManager{
             parameters:

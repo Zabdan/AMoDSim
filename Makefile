@@ -31,6 +31,9 @@ INCLUDE_PATH = \
     -Isimulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228 \
     -Isimulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500 \
     -Isimulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1 \
+    -Isimulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80 \
+    -Isimulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3 \
+    -Isimulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/seats-2 \
     -Isimulations/results/simHours-8 \
     -Isimulations/results/simHours-8/coordType-Heuristic \
     -Isimulations/results/simHours-8/coordType-Heuristic/maxDelay-5 \
@@ -66,7 +69,6 @@ OBJS = \
     $O/src/coordinator/StopPointOrderingProposal.o \
     $O/src/networkmanager/AdaptiveNetworkManager.o \
     $O/src/networkmanager/ManhattanNetworkManager.o \
-    $O/src/networkmanager/NetworkModifier.o \
     $O/src/node/App.o \
     $O/src/node/L2Queue.o \
     $O/src/node/ManhattanRouting.o \
@@ -165,6 +167,9 @@ clean:
 	$(Q)-rm -f simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/*_m.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/*_m.h
 	$(Q)-rm -f simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*_m.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*_m.h
 	$(Q)-rm -f simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*_m.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*_m.h
+	$(Q)-rm -f simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/*_m.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/*_m.h
+	$(Q)-rm -f simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/*_m.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/*_m.h
+	$(Q)-rm -f simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/seats-2/*_m.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/seats-2/*_m.h
 	$(Q)-rm -f simulations/results/simHours-8/*_m.cc simulations/results/simHours-8/*_m.h
 	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/*_m.cc simulations/results/simHours-8/coordType-Heuristic/*_m.h
 	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*_m.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*_m.h
@@ -182,7 +187,7 @@ cleanall: clean
 
 depend:
 	$(qecho) Creating dependencies...
-	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc simulations/*.cc simulations/out/*.cc simulations/results/*.cc simulations/results/simHours-4/*.cc simulations/results/simHours-4/coordType-Heuristic/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-50/*.cc simulations/results/simHours-50/coordType-Heuristic/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-8/*.cc simulations/results/simHours-8/coordType-Heuristic/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc src/*.cc src/common/*.cc src/coordinator/*.cc src/networkmanager/*.cc src/node/*.cc
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc simulations/*.cc simulations/out/*.cc simulations/results/*.cc simulations/results/simHours-4/*.cc simulations/results/simHours-4/coordType-Heuristic/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-50/*.cc simulations/results/simHours-50/coordType-Heuristic/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/seats-2/*.cc simulations/results/simHours-8/*.cc simulations/results/simHours-8/coordType-Heuristic/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc src/*.cc src/common/*.cc src/coordinator/*.cc src/networkmanager/*.cc src/node/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 $O/src/common/Packet_m.o: src/common/Packet_m.cc \
@@ -235,9 +240,6 @@ $O/src/networkmanager/AdaptiveNetworkManager.o: src/networkmanager/AdaptiveNetwo
 $O/src/networkmanager/ManhattanNetworkManager.o: src/networkmanager/ManhattanNetworkManager.cc \
 	src/networkmanager/AbstractNetworkManager.h \
 	src/networkmanager/ManhattanNetworkManager.h
-$O/src/networkmanager/NetworkModifier.o: src/networkmanager/NetworkModifier.cc \
-	src/networkmanager/AbstractNetworkManager.h \
-	src/networkmanager/NetworkModifier.h
 $O/src/node/App.o: src/node/App.cc \
 	src/common/Packet_m.h \
 	src/common/StopPoint.h \

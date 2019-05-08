@@ -5,7 +5,8 @@ simple AdaptiveNetworkManager like INetworkManager
 {
      parameters:
         int numberOfVehicles = default(1);
-        int numberOfNodes;        
+        int numberOfNodes;      
+        int dropOffNodeDist = default(4);  
         bool onlineRouting = default(false);
         string nodeTypesFile = default("../src/common/nodeTypes.txt");   
         string destNodesRequestMatchingFile = "../src/common/destNodesRequestMatching.txt"; 
