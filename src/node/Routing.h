@@ -26,6 +26,7 @@ private:
     int myAddress;
 
     AbstractNetworkManager* netmanager;
+    BaseCoord* tcoord;
     std::map<int,int> indexTable;
 
     typedef std::map<int,int> RoutingTable; // destaddr -> gateindex

@@ -36,7 +36,7 @@ class App : public cSimpleModule,cListener
 private:
     // configuration
     int myAddress;
-    int numberOfVehicles;
+    std::list<int> numberOfVehicles;
     int seatsPerVehicle;
     int boardingTime;
     int alightingTime;
@@ -90,42 +90,43 @@ void App::initialize()
     EV << "I am node " << myAddress << endl;
 
     //If the vehicle is in this node (at startup) subscribe it to "tripRequestSignal"
-    if (numberOfVehicles > 0)
+
+    if (numberOfVehicles.size() > 0)
     {
-        for(int i=0; i<numberOfVehicles; i++)
+        std::list<int>::iterator itV;
+        for(itV = numberOfVehicles.begin(); itV!=numberOfVehicles.end(); itV++)
         {
-              int val = intuniform(0,3,3);
+
+         //     int val = intuniform(0,3,3);
             // Random generation of vehicle type
             std::map<int, std::string> vTypes = readAllVehicleTypes();
-            std::map<int, std::string>::iterator it = vTypes.begin();
-            int firstId = (*it).first;
-            it = vTypes.end();
+          //  std::map<int, std::string>::iterator it = vTypes.begin();
+          //  int firstId = (*it).first;
+          /*  it = vTypes.end();
             it--;
             int lastId = (*it).first;
+            */
+
+
+            int vType = (*itV);
+            EV<<"TYPE VEHICLE "<<vType<<endl;
             Vehicle *v = new Vehicle();
-            if(val<3) {
-                v->setTypeId(lastId);
-                v->setType(vTypes[lastId]);
-                // veicCounter++;
-                      }
-            else {
-                v->setTypeId(firstId);
-                v->setType(vTypes[firstId]);
-               // veicCounter=0;
+           for(std::map<int, std::string>::iterator it = vTypes.begin(); it!=vTypes.end(); it++) {
+               if(it->first == vType) {
+                   v->setTypeId(it->first);
+                   v->setType(vTypes[it->first]);
+               }
+           }
 
-            }
 
-          //  int vTypeId = intuniform(firstId, lastId, 3);
 
-           // v->setTypeId(vTypeId);
-          //  v->setType(vTypes[vTypeId]);
             v->setSeats(seatsPerVehicle);
             EV << "I am node " << myAddress << ". I HAVE THE VEHICLE " << v->getID() <<"of type  "<<v->getType()<<  ". It has " << v->getSeats() << " seats." << endl;
-            tcoord->registerVehicle(v, myAddress);
+           tcoord->registerVehicle(v, myAddress);
         }
 
-        if (ev.isGUI())
-            getParentModule()->getDisplayString().setTagArg("i",1,"green");
+      //  if (ev.isGUI())
+        //    getParentModule()->getDisplayString().setTagArg("i",1,"green");
 
         //When the coordinator assign a new request to a vehicle, local node will be notified
         simulation.getSystemModule()->subscribe("newTripAssigned",this);
@@ -155,7 +156,7 @@ void App::handleMessage(cMessage *msg)
 
 
 
-
+   // StopPoint *currentStopPoint = NULL;
     StopPoint *currentStopPoint = tcoord->getCurrentStopPoint(vehicle->getID());
 
 
@@ -173,7 +174,8 @@ void App::handleMessage(cMessage *msg)
 
 
     //Ask to coordinator for next stop point
-    StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
+   // StopPoint *nextStopPoint = NULL;
+     StopPoint *nextStopPoint = tcoord->getNextStopPoint(vehicle->getID());
 
 
 

@@ -25,13 +25,35 @@ void AdaptiveNetworkManager::initialize()
     MAX_DELAY = getParentModule()->par("maxChDelay");
     MAX_TRY = 0;
 
+    updateSchedulingS=registerSignal("updateSchedulingS");
+
     bool onlineRouting = par("onlineRouting").boolValue();
+
+    int numVehiclesType1 = par("numberOfVehiclesType1");
+    int numVehiclesType0 = par("numberOfVehiclesType0");
+
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
     additionalTravelTime = setAdditionalTravelTime(getParentModule()->par("speed"), getParentModule()->par("acceleration"));
 
-    for(int i=0; i<numberOfVehicles; i++)
-        vehiclesPerNode[intuniform(0, numberOfNodes-1, 4)]+=1;
+
+    for(int i=0; i<numVehiclesType1; i++)
+    {
+
+        int numNode = intuniform(0, numberOfNodes-1, 4);
+        vehiclesPerNode[numNode].push_back(1);
+
+
+    }
+
+    for(int i=0; i<numVehiclesType0; i++)
+       {
+
+           int numNode = intuniform(0, numberOfNodes-1, 4);
+           vehiclesPerNode[numNode].push_back(0);
+
+       }
+
 
     topo = new cTopology("topo");
 
@@ -276,9 +298,6 @@ int AdaptiveNetworkManager::getOutputGate(int srcAddr, int dstAddr)
 
 
 
-
-
-
 cTopology::Node *AdaptiveNetworkManager::calculatePath(int srcAddr, int destAddr) {
 
 
@@ -295,6 +314,8 @@ cTopology::Node *AdaptiveNetworkManager::calculatePath(int srcAddr, int destAddr
 
 }
 
+
+/*
 
 void AdaptiveNetworkManager::setWeight(cTopology *topo) {
     //  EV<<"SETTING WEIGHT"<<endl;
@@ -319,10 +340,10 @@ void AdaptiveNetworkManager::setWeight(cTopology *topo) {
                     else {
                         time = length/speed;
                     }
-                    if(riskLevel == 0)
+                  //  if(riskLevel == 0)
                         l->setWeight(time);
-                    else
-                        l->setWeight(time*riskLevel);
+                  //  else
+                     //   l->setWeight(time*riskLevel);
                     l->getLocalGate()->getTransmissionChannel()->par("delay").setDoubleValue(time);
                     //  EV<<"RiskLevel "<<riskLevel<<" delay"<<time<<endl;
 
@@ -334,9 +355,10 @@ void AdaptiveNetworkManager::setWeight(cTopology *topo) {
         }
 
     }
+    rDMatch->clear();
 }
 
-
+*/
 
 
 
@@ -384,8 +406,6 @@ void AdaptiveNetworkManager::updateTables(int destAddress) {
 
 
 
-
-
         rtable[thisAddress][destAddress]=gateIndex;
        (*dtable)[thisAddress][destAddress]=timeDistanceToTarget(thisNode);
        (*sdtable)[thisAddress][destAddress]=spaceDistanceToTarget(thisNode);
@@ -412,8 +432,9 @@ void AdaptiveNetworkManager::updateTables(int destAddress) {
  */
 
 
-int AdaptiveNetworkManager::getVehiclesPerNode(int nodeAddr)
+std::list<int> AdaptiveNetworkManager::getVehiclesPerNode(int nodeAddr)
 {
+    /*
     int nVehicles = 0;
     std::map<int,int>::iterator it;
 
@@ -422,6 +443,8 @@ int AdaptiveNetworkManager::getVehiclesPerNode(int nodeAddr)
         nVehicles = it->second;
 
     return nVehicles;
+    */
+    return std::list<int>(vehiclesPerNode[nodeAddr]);
 }
 
 /**
@@ -467,6 +490,8 @@ void AdaptiveNetworkManager::updateWeight(cTopology::Node *srcNode, cTopology::N
 
         }
     }
+    rDMatch->clear();
+    delete rDMatch;
 }
 
 
@@ -487,6 +512,8 @@ void AdaptiveNetworkManager::setRiskLevel(cTopology::Node *srcNode, cTopology::N
             s.parse(sT.c_str());
         }
     }
+    riskLevels->clear();
+    delete riskLevels;
 }
 
 
@@ -518,6 +545,8 @@ void AdaptiveNetworkManager:: updateChannelDelay(cTopology::Node *srcNode, cTopo
         }
 
     }
+    rDMatch->clear();
+    delete rDMatch;
 }
 
 
@@ -566,6 +595,8 @@ void AdaptiveNetworkManager::setAllWeight() {
         }
 
     }
+    rDMatch->clear();
+    delete rDMatch;
 }
 
 
@@ -589,6 +620,28 @@ int AdaptiveNetworkManager::getMaxRisk() {
     return maxRisk;
 
 }
+
+
+
+int AdaptiveNetworkManager::getMinRisk() {
+    std::map<int, std::string> *rLevels = new std::map<int, std::string>();
+    readAllRiskLevels(rLevels, par("riskLevelsFile").stringValue());
+    int maxRisk = getMaxRisk();
+    int i = 0;
+    for(std::map<int, std::string>::iterator it = rLevels->begin(); it!= rLevels->end(); it++) {
+        int val = (*it).first;
+        if (i == 0) {
+            maxRisk = val;
+        }
+        else if( maxRisk >  val) {
+            maxRisk = val;
+        }
+
+    }
+    return maxRisk;
+
+}
+
 
 
 
@@ -670,7 +723,7 @@ void AdaptiveNetworkManager::setDropOffNodes() {
 
         cModule *node = getNodeFromCoords(c.first, c.second);
         // EV<<"Destination Node x"<<node->par("x").longValue()<<" y "<<node->par("y").longValue()<<endl;
-        if (i ==  0) {
+        if (i ==  0 || i == coords.size()-1) {
             for(std::map<int, std::string>::iterator it = nodeTypes->begin(); it!= nodeTypes->end(); it++) {
                 if((*it).second.compare("Hospital")==0) {
                     node->par("typeId").setLongValue((*it).first);
@@ -706,7 +759,8 @@ void AdaptiveNetworkManager::setDropOffNodes() {
     }
 
 
-
+   nodeTypes->clear();
+   delete nodeTypes;
 }
 
 
@@ -748,6 +802,9 @@ void  AdaptiveNetworkManager::setRedZone() {
 
         }
      }
+     coords->clear();
+     delete coords;
+
 }
 
 
@@ -901,12 +958,104 @@ return isGoodP;
 
 
 
+bool AdaptiveNetworkManager::checkChannelDropFeasability(cTopology::Node *srcNode, cTopology::Node *destNode) {
+
+
+    //std::vector<cModule *> destNodes =  getAllDestinationNodes();
+    bool isMaxRiskN = false;
+    int numLinks = 0;
+    int maxRisk = getMaxRisk();
+    double weight;
+    double riskLevel;
+    bool isGoodP = true;
+
+    for(int j = 0; j<srcNode->getNumOutLinks(); j++) {
+        cTopology::LinkOut *l = srcNode->getLinkOut(j);
+        if(l->getRemoteNode()->getModuleId() == destNode->getModuleId()) {
+            weight = l->getWeight();
+            riskLevel = l->getLocalGate()->getTransmissionChannel()->par("riskLevel");
+        }
+    }
+    setRiskLevel(srcNode, destNode, maxRisk);
+    updateChannelDelay(srcNode, destNode);
+    updateWeight(srcNode, destNode);
+
+
+    std::vector<cModule *> destNodes = getAllDestinationNodes();
+
+/*
+    for(int i = 0; i<destNodes.size(); i++) {
+
+
+        isGoodP = checkForGoodPath(destNodes[i]->par("address"), destNode->getModule()->par("address"));
+        isGoodP = checkForGoodPath(srcNode->getModule()->par("address"), destNodes[i]->par("address"));
+        if(isGoodP)
+            break;
+    }
+
+    if(isGoodP)
+        return isGoodP;
+*/
+    cModule *dNode = destNodes[0];
+
+
+       cTopology::LinkOut *linkOut;
+   // for(int i = 0; i<destNodes.size(); i++) {
+        int idNode = indexTable[dNode->par("address")];
+        calculatePath(dNode->par("address"),destNode->getModule()->par("address"));
+        linkOut = topo->getNode(idNode)->getPath(0);
+        while(linkOut!= NULL) {
+            if(linkOut->getWeight()  == maxRisk*MAX_DELAY) {
+                isGoodP = false;
+                break;
+            }
+            linkOut = linkOut->getRemoteNode()->getPath(0);
+        }
+   // }
+
+
+        // verifica se il nodo sorgente non deve necesariamente passare da quel link per raggiungere l'esterno della zona rossa
+
+              calculatePath(srcNode->getModule()->par("address"),dNode->par("address"));
+              linkOut = srcNode->getPath(0);
+              while(linkOut!= NULL) {
+                  if(linkOut->getWeight()  == maxRisk*MAX_DELAY) {
+                      isGoodP = false;
+                      break;
+                  }
+                  linkOut = linkOut->getRemoteNode()->getPath(0);
+              }
+
+
+
+
+
+        setRiskLevel(srcNode, destNode, riskLevel);
+        updateChannelDelay(srcNode, destNode);
+        updateWeight(srcNode, destNode);
+        //  setRiskLevel(srcNode, destNode, riskLevel);
+
+        //setWeight(destNode, srcNode, weight);
+
+return isGoodP;
+
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
 void AdaptiveNetworkManager::handleMessage(cMessage *msg)
 {
-   // int seed = intuniform(0, 3, 2);
+    int seed = 3;
     double maxRiskChann = getParentModule()->par("maxNumDroppedChannels");
     double dropChRate = getParentModule()->par("dropChRate");
 
@@ -916,21 +1065,34 @@ void AdaptiveNetworkManager::handleMessage(cMessage *msg)
     if(msg == updateWeightMessage) {
         EV << "UpdateConnectionsMessage arrived  : "<< endl;
     //    int sed = intuniform(0, 3, 2);    //perchè messo qui da errore???
-     //  if(MAX_TRY < maxRiskChann) {
+       if(MAX_TRY < maxRiskChann) {
             std::pair<int, int> nodes = getCenteredSquareRndLinkedNodes(3);
             if(nodes.second != -1)  {
             cTopology::Node * sNode= topo->getNode(indexTable[nodes.first]);
             cTopology::Node * dNode= topo->getNode(indexTable[nodes.second]);
-            bool cm = checkAndSetMaxRiskAndWeight(sNode, dNode);
-         //   if(cm)
-          //  updateTables(nodes.second);
-            bool cm2 =checkAndSetMaxRiskAndWeight(dNode, sNode);
-         //   if(cm || cm2)
-         //   updateAllTables();
-           // MAX_TRY++;
+           // bool cm = checkAndSetMaxRiskAndWeight(sNode, dNode);
+        //    bool cm2 =checkAndSetMaxRiskAndWeight(dNode, sNode);
+            bool cm = checkChannelDropFeasability(sNode, dNode);
+            bool cm2 = checkChannelDropFeasability( dNode, sNode);
+            if(cm && cm2) {
+                setRiskLevel(sNode, dNode, getMaxRisk());
+                updateChannelDelay(sNode, dNode);
+                updateWeight(sNode, dNode);
+                setRiskLevel(dNode, sNode, getMaxRisk());
+                updateChannelDelay(dNode, sNode);
+                updateWeight(dNode, sNode);
+                MAX_TRY++;
+
+            }
+
+
+           // emit(updateSchedulingS,new std::string("hk"));
+          //  tcoord->updateAllScheduling();
+
+
             }
             scheduleAt(simTime()+dropChRate, updateWeightMessage);
-     //   }
+        }
 
 
 
@@ -987,6 +1149,9 @@ void AdaptiveNetworkManager::setPickUpNodes() {
            node->par("type").setStringValue("PickUp");
            node->par("isRequestGenerator").setBoolValue(true);
     }
+    coords->clear();
+    delete coords;
+
 
 }
 
@@ -1159,6 +1324,9 @@ int AdaptiveNetworkManager::getCloserValidDestinationAddress(int srcAddress, int
     }
     //   if(n != NULL)
     //  EV<<"ADRRRRRRRr"<<n->getId()<<endl;
+
+    nRMatch->clear();
+    delete nRMatch;
     return nodeCloser->par("address").doubleValue();
 
 

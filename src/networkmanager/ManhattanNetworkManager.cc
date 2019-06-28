@@ -25,10 +25,10 @@ void ManhattanNetworkManager::initialize()
 
     numberOfVehicles = par("numberOfVehicles");
     numberOfNodes = par("numberOfNodes");
-
+/*
     for(int i=0; i<numberOfVehicles; i++)
         vehiclesPerNode[intuniform(0, numberOfNodes-1, 4)]+=1;
-
+*/
     xChannelLength = parentModule->par("xNodeDistance");
     yChannelLength = parentModule->par("yNodeDistance");
 
@@ -189,8 +189,10 @@ cTopology::Node *ManhattanNetworkManager::calculatePath(int srcAddr, int destAdd
  * @param nodeAddr
  * @return
  */
-int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
+std::list<int> ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
 {
+     std::list<int> l;
+    /*
     int nVehicles = 0;
     std::map<int,int>::iterator it;
 
@@ -199,6 +201,8 @@ int ManhattanNetworkManager::getVehiclesPerNode(int nodeAddr)
        nVehicles = it->second;
 
     return nVehicles;
+    */
+    return l;
 }
 
 

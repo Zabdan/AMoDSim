@@ -27,23 +27,43 @@
 #include <fstream>
 #include <iostream>
 #include <numeric>
+#include <limits>
 
 class BaseCoord : public cSimpleModule, cListener{
 
 private:
     virtual void updateVehicleStopPoints(int vehicleID, std::list<StopPoint*> spList, StopPoint *pickupSP);
+    virtual void updateVehicleStopPointsRealloc(int vehicleID, std::list<StopPoint*> spList, StopPoint *pickupSP);
+    virtual void deleteOutOfTimeSP(int vehicleID);
 
     protected:
         double totrequests;
+
+        double totRedCodes;
+        double totYellowCodes;
+
+        double totInTimeAssignedRedCodes;
+        double totInTimeAssignedYellowCodes;
+
         double totalAssignedRequests;
         double totalPickedupRequests;
         double totalDroppedoffRequest;
+
+        double totalInTimePickedupRedCodes;
+        double totalInTimePickedupYellowCodes;
+        double totalInTimeDroppedoffRedCodes;
+        double totalInTimeDroppedoffYellowCodes;
+
         double freeVehicles;
         double minTripLength;
         int requestAssignmentStrategy;
 
         int boardingTime;
         int alightingTime;
+        bool requestReallocation;
+
+
+
         AbstractNetworkManager* netmanager;
 
         //Trip related signals
@@ -57,6 +77,8 @@ private:
         simsignal_t waitingTimeForYellowCodes;
         simsignal_t waitingTimeForRedCodes;
 
+        simsignal_t updateSchedulingS;
+
         std::vector<double> waitingTimeVector;
 
 
@@ -68,18 +90,26 @@ private:
         simsignal_t actualTripTimeForYellowCodes;
         simsignal_t actualTripTimeForRedCodes;
 
+
+        simsignal_t normalizedTripTimeForRedCodes;
+        simsignal_t normalizedTripTimeForYellowCodes;
+
+
         std::vector<double> actualTripTimeVector;
 
         std::vector<double> actualTripTimeForYellowCodesVector;
         std::vector<double> actualTripTimeForRedCodesVector;
 
-        simsignal_t outOfTimeForYellowCodes;
-        simsignal_t outOfTimeForRedCodes;
+        std::vector<double> normalizedTripTimeForYellowCodesVector;
+        std::vector<double> normalizedTripTimeForRedCodesVector;
+
+      //  simsignal_t totInTimeAssignedYellowCodes;
+       // simsignal_t totInTimeRedCodes;
         simsignal_t outOfTimeForGreenCodes;
 
 
-        std::vector<double> outOfTimeForYellowCodesVector;
-        std::vector<double> outOfTimeForRedCodesVector;
+        std::vector<double> inTimeAssignedYellowCodesVector;
+        std::vector<double> inTimeAssignedRedCodesVector;
         std::vector<double> outOfTimeForGreenCodesVector;
 
         simsignal_t stretch;
@@ -92,15 +122,28 @@ private:
         simsignal_t requestsAssignedPerVehicle;
 
         simsignal_t totalRequestsPerTime;
+
+        simsignal_t totalRedCodesPerTime;
+        simsignal_t totalYellowCodesPerTime;
+
         simsignal_t assignedRequestsPerTime;
         simsignal_t pickedupRequestsPerTime;
         simsignal_t droppedoffRequestsPerTime;
+
+        simsignal_t pickedupRedCodesPerTime;
+        simsignal_t droppedoffRedCodesPerTime;
+
+        simsignal_t pickedupYellowCodesPerTime;
+        simsignal_t droppedoffYellowCodesPerTime;
+
         simsignal_t freeVehiclesPerTime;
 
         std::map<Vehicle*, int> vehicles; //Vehicle -> node address
         std::map<int, StopPoint*> servedPickup;   //Details related to served pickup: needed to extract per-trip metrics
         std::map<int, double> rAssignedPerVehicle; //Number of requests assigned per vehicle
         std::map<int, std::map<int, VehicleState*>> statePerVehicle;
+        std::map<int, StopPoint*>  lastSPPerVehicle;
+
 
         typedef std::map<int,std::list<StopPoint*>> RequestsPerVehicle; //vehicleID/list of requests
         RequestsPerVehicle rPerVehicle;
@@ -111,19 +154,30 @@ private:
         typedef std::map<int,TripRequest*> PendingRequests; //requestID/request
         PendingRequests pendingRequests;
 
+        typedef std::map<int, TripRequest*> InTimeYellowCodesRequests;
+        InTimeYellowCodesRequests inTimeYellowCodesRequests;
+
+        typedef std::map<int, TripRequest*> InTimeRedCodesRequests;
+        InTimeRedCodesRequests inTimeRedCodesRequests;
+
 
         void initialize();
         void finish();
 
         virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) = 0;
-        virtual void handleTripRequest(TripRequest *tr) = 0;
-        bool eval_feasibility(int vehicleID, StopPoint *sp); //Evaluate if the new stop-point is feasible by a vehicle
-        virtual StopPointOrderingProposal* eval_requestAssignment(int vehicleID, TripRequest* newTR) = 0; //Sort the stop-points related to the specified vehicle including the new request's pickup and dropoff point, if feasible.
+      //  virtual void handleTripRequest(TripRequest *tr) = 0;
+      bool eval_feasibility(int vehicleID, StopPoint *sp); //Evaluate if the new stop-point is feasible by a vehicle
+
+        virtual int handleTripRequest(TripRequest *tr, bool isReAllocation) = 0;
+        virtual StopPointOrderingProposal* eval_requestAssignment(int vehicleID, TripRequest* newTR, bool isR) = 0; //Sort the stop-points related to the specified vehicle including the new request's pickup and dropoff point, if feasible.
         int minWaitingTimeAssignment (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the pickup waiting time
         int minCostAssignment(std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR); //Assign the new trip request to the vehicle which minimize the cost
+        int minCostAssignment(std::map<int, StopPointOrderingProposal*> vehicleProposal, TripRequest *tr, bool isRealloc);
+        int minWaitingTimeAssignmentWithReloc (std::map<int,StopPointOrderingProposal*> vehicleProposal, TripRequest* newTR, bool isReloc); //Assign the new trip request to the vehicle which minimize the pickup waiting time
 
+        void updateOverTimeRequestsStatistic(std::list<StopPoint*> spList,int pReq);
 
-        StopPoint* getRequestPickup(std::list<StopPoint*> spList, int requestID);
+       StopPoint* getRequestPickup(std::list<StopPoint*> spList, int requestID);
         StopPoint* getRequestDropOff(std::list<StopPoint*> spList, int requestID);
         void cleanStopPointList(std::list<StopPoint*> spList);
 
@@ -139,11 +193,20 @@ private:
         virtual int deleteSPFromVehicleList(int vehicleID, int requestID);
         virtual int getMaxRequestPriority();*/
 
+
+
+
+        int getMaxTypeRequestPriority();
+        virtual int getMaxTInSPList( std::list<StopPoint*> spList);
+        virtual int getMinTInSPList( std::list<StopPoint*> spList);
+        virtual std::list<StopPoint *>::iterator getPosOfLastPBlock(std::list<StopPoint *>::iterator begin, std::list<StopPoint *>::iterator end, int priority);
         virtual std::map<int,int> readAllRequestVeichleTypesMatching();
         virtual bool checkRequestVeichleTypesMatching(int requestTypeId, int veichleTypeId);
         virtual std::map<int, std::string> readAllRequestTypes();
 
         virtual void printOverDelayTimeSum(int requestTypeID, int vehicleID);
+
+
 
         //--------
 
@@ -157,9 +220,15 @@ private:
         //--modified--
         bool isRequestValid(const TripRequest tr);
 
+        void updateAllScheduling();
+        virtual void updateScheduling(int vehicleID, int vehicleLocation)=0;
+        void updateScheduling(int vehicleID);
+
         int countOnBoardRequests(int vehicleID);
         StopPoint* getNewAssignedStopPoint(int vehicleID);
         inline double getMinTripLength(){return minTripLength;}
+
+
 };
 
 #endif /* BASECOORD_H_ */

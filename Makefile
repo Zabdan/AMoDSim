@@ -18,6 +18,7 @@ INCLUDE_PATH = \
     -I. \
     -Isimulations \
     -Isimulations/out \
+    -Isimulations/result-test \
     -Isimulations/results \
     -Isimulations/results/simHours-4 \
     -Isimulations/results/simHours-4/coordType-Heuristic \
@@ -40,6 +41,15 @@ INCLUDE_PATH = \
     -Isimulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228 \
     -Isimulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500 \
     -Isimulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1 \
+    -Isimulations/results-test \
+    -Isimulations/results-test/simHours-4 \
+    -Isimulations/results-test/simHours-4/coordType-Heuristic \
+    -Isimulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15 \
+    -Isimulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3 \
+    -Isimulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4 \
+    -Isimulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5 \
+    -Isimulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/maxNumDroppedChannels-10 \
+    -Isimulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/maxNumDroppedChannels-10/riskZoneExp-1 \
     -Isrc \
     -Isrc/common \
     -Isrc/coordinator \
@@ -154,6 +164,7 @@ clean:
 	$(Q)-rm -f ./*_m.cc ./*_m.h
 	$(Q)-rm -f simulations/*_m.cc simulations/*_m.h
 	$(Q)-rm -f simulations/out/*_m.cc simulations/out/*_m.h
+	$(Q)-rm -f simulations/result-test/*_m.cc simulations/result-test/*_m.h
 	$(Q)-rm -f simulations/results/*_m.cc simulations/results/*_m.h
 	$(Q)-rm -f simulations/results/simHours-4/*_m.cc simulations/results/simHours-4/*_m.h
 	$(Q)-rm -f simulations/results/simHours-4/coordType-Heuristic/*_m.cc simulations/results/simHours-4/coordType-Heuristic/*_m.h
@@ -176,6 +187,15 @@ clean:
 	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*_m.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*_m.h
 	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*_m.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*_m.h
 	$(Q)-rm -f simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*_m.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*_m.h
+	$(Q)-rm -f simulations/results-test/*_m.cc simulations/results-test/*_m.h
+	$(Q)-rm -f simulations/results-test/simHours-4/*_m.cc simulations/results-test/simHours-4/*_m.h
+	$(Q)-rm -f simulations/results-test/simHours-4/coordType-Heuristic/*_m.cc simulations/results-test/simHours-4/coordType-Heuristic/*_m.h
+	$(Q)-rm -f simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/*_m.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/*_m.h
+	$(Q)-rm -f simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/*_m.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/*_m.h
+	$(Q)-rm -f simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/*_m.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/*_m.h
+	$(Q)-rm -f simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/*_m.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/*_m.h
+	$(Q)-rm -f simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/maxNumDroppedChannels-10/*_m.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/maxNumDroppedChannels-10/*_m.h
+	$(Q)-rm -f simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/maxNumDroppedChannels-10/riskZoneExp-1/*_m.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/maxNumDroppedChannels-10/riskZoneExp-1/*_m.h
 	$(Q)-rm -f src/*_m.cc src/*_m.h
 	$(Q)-rm -f src/common/*_m.cc src/common/*_m.h
 	$(Q)-rm -f src/coordinator/*_m.cc src/coordinator/*_m.h
@@ -187,7 +207,7 @@ cleanall: clean
 
 depend:
 	$(qecho) Creating dependencies...
-	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc simulations/*.cc simulations/out/*.cc simulations/results/*.cc simulations/results/simHours-4/*.cc simulations/results/simHours-4/coordType-Heuristic/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-50/*.cc simulations/results/simHours-50/coordType-Heuristic/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/seats-2/*.cc simulations/results/simHours-8/*.cc simulations/results/simHours-8/coordType-Heuristic/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc src/*.cc src/common/*.cc src/coordinator/*.cc src/networkmanager/*.cc src/node/*.cc
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc simulations/*.cc simulations/out/*.cc simulations/result-test/*.cc simulations/results/*.cc simulations/results/simHours-4/*.cc simulations/results/simHours-4/coordType-Heuristic/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-4/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-50/*.cc simulations/results/simHours-50/coordType-Heuristic/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/*.cc simulations/results/simHours-50/coordType-Heuristic/maxDelay-5/sendIaTime-80/vehicles-3/seats-2/*.cc simulations/results/simHours-8/*.cc simulations/results/simHours-8/coordType-Heuristic/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/*.cc simulations/results/simHours-8/coordType-Heuristic/maxDelay-5/sendIaTime-228/vehicles-500/seats-1/*.cc simulations/results-test/*.cc simulations/results-test/simHours-4/*.cc simulations/results-test/simHours-4/coordType-Heuristic/*.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/*.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/*.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/*.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/*.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/maxNumDroppedChannels-10/*.cc simulations/results-test/simHours-4/coordType-Heuristic/maxDelay-15/vehicles-3/seats-4/sendIaTime-5/maxNumDroppedChannels-10/riskZoneExp-1/*.cc src/*.cc src/common/*.cc src/coordinator/*.cc src/networkmanager/*.cc src/node/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 $O/src/common/Packet_m.o: src/common/Packet_m.cc \

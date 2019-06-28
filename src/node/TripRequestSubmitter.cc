@@ -40,6 +40,7 @@ class TripRequestSubmitter : public cSimpleModule
 
         // signals
         simsignal_t tripRequest;
+       // simsignal_t updateSchedulingS;
 
         int req_count;
 
@@ -92,6 +93,7 @@ void TripRequestSubmitter::initialize()
 //    if(!netmanager->isValidDestinationAddress(myAddress)) {
     generatePacket = new cMessage("nextPacket");
     tripRequest = registerSignal("tripRequest");
+   // updateSchedulingS=registerSignal("updateSchedulingS");
 
     if(reqGen) {
          EV<<"TripRequest not generated for node x,y"<<getParentModule()->par("x").longValue()<<" "<<getParentModule()->par("y").longValue()<<endl;
@@ -134,6 +136,7 @@ void TripRequestSubmitter::handleMessage(cMessage *msg)
         EV << "Requested pickupTime: " << tr->getPickupSP()->getTime() << ". DropOFF required time: " << tr->getDropoffSP()->getTime() << ". Passengers: " << tr->getPickupSP()->getNumberOfPassengers() << endl;
 
         emit(tripRequest, tr);
+       // emit( updateSchedulingS, tr);
 
         //Schedule the next request
         simtime_t nextTime = simTime() + sendIATime->doubleValue();
@@ -154,7 +157,7 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
 {
     TripRequest *request = new TripRequest();
     double simtime = simTime().dbl();
-
+    double delay =  maxDelay->doubleValue();
 
 
 
@@ -171,18 +174,22 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
    request->setType(reqTypes[requestId]);*/
 
    if(req_count >=0 && req_count<3) {
-       request->setTypeID(lastId);
-       request->setType(reqTypes[lastId]);
+       int requestId = 1;
+       request->setTypeID(requestId);
+       request->setType(reqTypes[requestId]);
        req_count++;
    }
    else {
-       int requestId = intuniform(firstId, lastId-1, 3);      // test type 1 end type 2
+       int requestId = 2; //intuniform(firstId, lastId-1, 3);      // test type 1 end type 2
            request->setTypeID(requestId);
           request->setType(reqTypes[requestId]);
 
        req_count=0;
 
    }
+
+   if(request->getTypeID() == 1)
+       delay = delay;
 
    // request->setTypeID(2);
   //  request->setType(reqTypes[2]);
@@ -205,12 +212,12 @@ TripRequest* TripRequestSubmitter::buildTripRequest()
     int destAddress =  netmanager->getCloserValidDestinationAddress(myAddress, request->getTypeID());
 
 
-    StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, maxDelay->doubleValue());
+    StopPoint *pickupSP = new StopPoint(request->getID(), myAddress, true, simtime, delay);
     pickupSP->setXcoord(x_coord);
     pickupSP->setYcoord(y_coord);
     pickupSP->setNumberOfPassengers(par("passengersPerRequest"));
 
-    StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), maxDelay->doubleValue());
+    StopPoint *dropoffSP = new StopPoint(request->getID(), destAddress, false, simtime + netmanager->getTimeDistance(myAddress, destAddress), delay);
 
     request->setPickupSP(pickupSP);
     request->setDropoffSP(dropoffSP);

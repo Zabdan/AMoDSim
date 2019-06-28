@@ -4,7 +4,10 @@ package src.networkmanager;
 simple AdaptiveNetworkManager like INetworkManager
 {
      parameters:
-        int numberOfVehicles = default(1);
+        
+        int numberOfVehiclesType0 = default(0);
+        int numberOfVehiclesType1 = default(1);
+        int numberOfVehicles = default(numberOfVehiclesType0+numberOfVehiclesType1);
         int numberOfNodes;      
         int dropOffNodeDist = default(4);  
         bool onlineRouting = default(false);

@@ -12,6 +12,9 @@ simple BaseCoord like ICoord
         string requestVehicleMatchingFile = "../src/common/requestVehicleMatching.txt";
         string requestTypesFile = "../src/common/requestTypes.txt";
         
+        bool requestsReallocation = default(false); 
+        int maxReallocForRedCodes = default(1);
+        
         @display("i=block/cogwheel_s");
         
         // ------ SIGNALS -------- //
@@ -40,6 +43,16 @@ simple BaseCoord like ICoord
         @signal[actualTripTimeForRedCodes](type="double");				//Actual time scored on vehicle (per request)
         @statistic[actualTripTimeForRedCodes](title="Actual Trip Time For Red Codes (minute)";source="actualTripTimeForRedCodes";unit=minute;record=vector,stats;interpolationmode=none); 
        
+         
+        @signal[normalizedTripTimeForYellowCodes](type="double");				//Actual time scored on vehicle (per request)
+        @statistic[normalizedTripTimeForYellowCodes](title="Normalized Trip Time For Yellow Codes (minute)";source="normalizedTripTimeForYellowCodes";unit=minute;record=vector,stats;interpolationmode=none);
+       
+         
+        @signal[normalizedTripTimeForRedCodes](type="double");				//Actual time scored on vehicle (per request)
+        @statistic[normalizedTripTimeForRedCodes](title="Normalized Trip Time For Red Codes (minute)";source="normalizedTripTimeForRedCodes";unit=minute;record=vector,stats;interpolationmode=none);  
+         
+         
+         
          
         @signal[outOfTimeForYellowCodes](type="double");				//Actual time scored on vehicle (per request)
         @statistic[outOfTimeForYellowCodes](title="Out of  Time For Yellow Codes (minute)";source="outOfTimeForYellowCodes";unit=minute;record=vector,stats;interpolationmode=none);  
@@ -76,14 +89,34 @@ simple BaseCoord like ICoord
 		@signal[totalRequestsPerTime](type="double");
 		@statistic[totalRequestsPerTime](title="Total Requests Per Time";source="totalRequestsPerTime";record=vector;interpolationmode=none);
 		
+		@signal[totalRedCodesPerTime](type="double");
+		@statistic[totalRedCodesPerTime](title="Total RedCodes Per Time";source="totalRedCodesPerTime";record=vector;interpolationmode=none);
+		
+		@signal[totalYellowCodesPerTime](type="double");
+		@statistic[totalYellowCodesPerTime](title="Total YellowCodes Per Time";source="totalYellowCodesPerTime";record=vector;interpolationmode=none);
+		
+		
 		@signal[assignedRequestsPerTime](type="double");
 		@statistic[assignedRequestsPerTime](title="Assigned Requests Per Time";source="assignedRequestsPerTime";record=vector;interpolationmode=none);
 		       
         @signal[pickedupRequestsPerTime](type="double");
 		@statistic[pickedupRequestsPerTime](title="Picked-up Requests Per Time";source="pickedupRequestsPerTime";record=vector;interpolationmode=none);
         
+        @signal[pickedupRedCodesPerTime](type="double");
+		@statistic[pickedupRedCodesPerTime](title="Picked-up RedCodes Per Time";source="pickedupRedCodesPerTime";record=vector;interpolationmode=none);
+    
+        @signal[pickedupYellowCodesPerTime](type="double");
+		@statistic[pickedupYellowCodesPerTime](title="Picked-up YellowCodes Per Time";source="pickedupYellowCodesPerTime";record=vector;interpolationmode=none);
+        
         @signal[droppedoffRequestsPerTime](type="double");
 		@statistic[droppedoffRequestsPerTime](title="Dropped-off Requests Per Time";source="droppedoffRequestsPerTime";record=vector;interpolationmode=none);
+		
+		@signal[droppedoffRedCodesPerTime](type="double");
+		@statistic[droppedoffRequestsPerTime](title="Dropped-off RedCodes Per Time";source="droppedoffRedCodesPerTime";record=vector;interpolationmode=none);
+		
+		@signal[droppedoffYellowCodesPerTime](type="double");
+		@statistic[droppedoffYellowPerTime](title="Dropped-off YellowCodes Per Time";source="droppedoffYellowCodesPerTime";record=vector;interpolationmode=none);
+		
 		
 		@signal[freeVehiclesPerTime](type="double");
 		@statistic[freeVehiclesPerTime](title="Free Vehicles Per Time";source="freeVehiclesPerTime";record=vector;interpolationmode=none);

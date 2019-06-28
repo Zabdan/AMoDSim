@@ -49,7 +49,7 @@ private:
 
     virtual bool checkForGoodPath(int srcAddr, int dstAddr);
     virtual cTopology::Node *calculatePath(int srcAddr, int destAddr);
-    virtual void setWeight(cTopology *topo);
+   // virtual void setWeight(cTopology *topo);
 
     virtual void setRiskLevel(cTopology::Node *srcNode, cTopology::Node *destNode, double riskLevel);
     virtual void setAllWeight();
@@ -58,7 +58,9 @@ private:
     virtual void updateWeight(cTopology::Node *srcNode, cTopology::Node *destNode);
     virtual void updateChannelDelay(cTopology::Node *srcNode, cTopology::Node *destNode);
     virtual int getMaxRisk();
+    virtual int getMinRisk();
     virtual  bool checkAndSetMaxRiskAndWeight(cTopology::Node *srcNode, cTopology::Node *destNode);
+    virtual bool checkChannelDropFeasability(cTopology::Node *srcNode, cTopology::Node *destNode);
   //  virtual void readAllNodeTypes(std::map<int, std::string> *nodeTypes) override;
   //  virtual void readAlldestNodesRequestsMatching(std::map<int, int> *nRMatch) override;
     virtual std::vector<cModule *> getAllDestinationNodes(int nodeTypeId) override;
@@ -93,7 +95,7 @@ private:
     virtual double getSpaceDistance(int srcAddr, int dstAddr) override;
     virtual double getChannelLength(int nodeAddr, int gateIndex) override;
     virtual int getOutputGate(int srcAddr, int destAddr) override;
-    virtual int getVehiclesPerNode(int nodeAddr) override;
+    virtual std::list<int> getVehiclesPerNode(int nodeAddr) override;
     virtual bool isValidAddress(int nodeAddr) override;
     virtual bool isValidDestinationAddress(int requestTypeId,int destAddr) override;
     virtual bool isValidDestinationAddress(int destAddr) override;

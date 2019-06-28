@@ -31,6 +31,7 @@ void Routing::initialize()
 {
     myAddress = getParentModule()->par("address");
     netmanager = check_and_cast<AbstractNetworkManager *>(getParentModule()->getParentModule()->getSubmodule("netmanager"));
+    tcoord = check_and_cast<BaseCoord *>(getParentModule()->getParentModule()->getSubmodule("tcoord"));
 }
 
 Define_Module(Routing);
@@ -51,7 +52,7 @@ void Routing::handleMessage(cMessage *msg)
     int outGateIndex = netmanager->getOutputGate(myAddress,destAddr);
     pk->setHopCount(pk->getHopCount()+1);
     pk->setTraveledDistance(pk->getTraveledDistance() + netmanager->getChannelLength(myAddress,outGateIndex));
-
+    tcoord->updateScheduling(pk->getID(),myAddress);
     //send the vehicle to the next node
     send(pk, "out", outGateIndex);
 }

@@ -121,8 +121,5 @@ int TripRequest::getTypeID() const {
 
 
 
-bool isValidType(int type) {
 
-
-}
 
